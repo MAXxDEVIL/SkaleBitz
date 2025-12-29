@@ -48,7 +48,7 @@ const testimonial = {
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-50">
+    <div className="min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-50">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 lg:px-8">
         <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-500/20 text-sky-300">
@@ -108,7 +108,7 @@ function Landing() {
 
           <div className="relative">
             <div className="absolute inset-0 blur-3xl">
-              <div className="h-full rounded-3xl bg-gradient-to-br from-sky-500/40 via-cyan-400/20 to-purple-500/30" />
+              <div className="h-full rounded-3xl bg-linear-to-br from-sky-500/40 via-cyan-400/20 to-purple-500/30" />
             </div>
             <div className="relative rounded-3xl border border-slate-800 bg-slate-900/70 p-6 shadow-2xl shadow-sky-900/30 backdrop-blur">
               <div className="flex items-center justify-between">
@@ -134,7 +134,7 @@ function Landing() {
                   <p>Payouts</p>
                 </div>
               </div>
-              <div className="mt-6 rounded-2xl bg-gradient-to-r from-sky-500/10 via-cyan-500/10 to-purple-500/10 p-4 text-sm text-slate-100">
+              <div className="mt-6 rounded-2xl bg-linear-to-r from-sky-500/10 via-cyan-500/10 to-purple-500/10 p-4 text-sm text-slate-100">
                 “{testimonial.quote}”
                 <p className="mt-3 text-xs text-slate-300">
                   — {testimonial.author}, {testimonial.role}
@@ -200,7 +200,7 @@ function Landing() {
           </div>
         </section>
 
-        <section id="cta" className="mt-20 rounded-3xl bg-gradient-to-r from-sky-600 via-cyan-500 to-blue-600 p-[1px] shadow-2xl shadow-sky-900/40">
+        <section id="cta" className="mt-20 rounded-3xl bg-linear-to-r from-sky-600 via-cyan-500 to-blue-600 p-px shadow-2xl shadow-sky-900/40">
           <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-slate-950/90 px-8 py-10 lg:flex-row lg:items-center">
             <div>
               <h3 className="text-2xl font-semibold text-white">Ready to launch your next fintech product?</h3>

@@ -1,7 +1,6 @@
-function App() {
-  return (
-     <h1>Hello World</h1>
-  );
-}
+import Landing from '../pages/Landing';
 
+function App() {
+  return <Landing />;
+}
 export default App;

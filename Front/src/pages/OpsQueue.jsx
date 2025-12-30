@@ -11,6 +11,7 @@ import {
   User,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Container from '../components/layout/Container';
 
 const filters = ['All', 'KYC/KYB', 'Docs', 'Payouts', 'Risk'];
 const queue = [
@@ -36,8 +37,8 @@ const statusBadge = (status) => {
 
 export default function OpsQueue() {
   return (
-    <div className="min-h-screen bg-[#F6F9FC] text-[#111827] px-6 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
+    <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
+      <Container className="flex flex-col gap-8 py-10">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -52,7 +53,7 @@ export default function OpsQueue() {
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
                 <Sparkles size={18} />
               </div>
-              FintechOS · Ops Queue
+              SkaleBitz · Ops Queue
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -123,7 +124,7 @@ export default function OpsQueue() {
                       </span>
                     </div>
                   </div>
-                  <Link className="text-sm font-semibold text-[#1F6FEB] hover:underline" to={`/ops/tasks/${item.id}`}>
+                   <Link className="text-sm font-semibold text-[#1F6FEB] hover:underline" to={`/ops/tasks/${item.id}`}>
                      Open
                    </Link>
                 </div>
@@ -186,7 +187,7 @@ export default function OpsQueue() {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

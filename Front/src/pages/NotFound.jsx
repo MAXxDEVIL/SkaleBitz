@@ -1,77 +1,138 @@
 import React from 'react';
+import { motion as Motion } from 'framer-motion';
+import { ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const NotFound = () => {
-    return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center overflow-hidden font-sans">
-      <div className="relative w-full max-w-lg aspect-square flex flex-col items-center justify-center">
-        
-        {/* Background "404" Text */}
-        <h1 className="absolute text-[12rem] font-black text-slate-200 select-none z-0">
-          404
-        </h1>
+  const navigate = useNavigate();
 
-        {/* UFO Wrapper - Handles the hovering motion */}
-        <div className="relative z-20 animate-hover">
-          
-          {/* UFO Body */}
-          <div className="relative">
-            {/* Top Dome */}
-            <div className="w-24 h-12 bg-slate-800 rounded-t-full mx-auto translate-y-2 border-b-4 border-slate-700"></div>
-            {/* Main Saucer */}
-            <div className="w-48 h-16 bg-slate-900 rounded-full flex items-center justify-around px-4 border-b-8 border-slate-950">
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse delay-75"></div>
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse delay-150"></div>
-            </div>
-          </div>
+  // Animation variants for the container entrance
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.6, 
+        ease: "easeOut",
+        when: "beforeChildren",
+        staggerChildren: 0.1 
+      }
+    }
+  };
 
-          {/* Light Beam */}
-          <div 
-            className="w-40 h-64 bg-linear-to-b from-blue-400/30 to-transparent mx-auto -mt-2.5"
-            style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)' }}
-          >
-            {/* The Beaming Document */}
-            <div className="w-12 h-16 bg-white shadow-lg rounded-sm mx-auto flex flex-col p-2 gap-1 animate-beam-up">
-               <div className="h-1 w-full bg-slate-200"></div>
-               <div className="h-1 w-3/4 bg-slate-200"></div>
-               <div className="h-1 w-full bg-slate-200"></div>
-            </div>
-          </div>
-          </div>
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
 
-          {/* Bottom Text Content */}
-        <div className="mt-8 text-center z-30">
-          <h2 className="text-2xl font-bold text-slate-800">Look's like we have a problem</h2>
-          <p className="text-slate-500 mt-2">The page you're looking for was abducted.</p>
-          <button
-            onClick={() => (window.location.href = '/')}
-            className="mt-6 px-6 py-2 rounded-full font-semibold text-white bg-[#1F6FEB] hover:bg-[#195CC7] shadow-lg shadow-[#1F6FEB33] transition"
-          >
-            Go home
-          </button>
-        </div>
-
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 overflow-hidden relative">
+      
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <Motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-24 -right-24 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl" 
+        />
+        <Motion.div 
+          animate={{ 
+            scale: [1, 1.3, 1],
+            x: [0, 50, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute -bottom-24 -left-24 w-80 h-80 bg-indigo-100/40 rounded-full blur-3xl" 
+        />
       </div>
 
-      {/* Custom Styles for Keyframes */}
-      <style jsx>{`
-        @keyframes hover {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
-        }
-        @keyframes beam-up {
-          0% { transform: translateY(180px) scale(1); opacity: 0; }
-          20% { opacity: 1; }
-          80% { opacity: 1; }
-          100% { transform: translateY(0px) scale(0.2); opacity: 0; }
-        }
-        .animate-hover {
-          animation: hover 3s ease-in-out infinite;
-        }
-        .animate-beam-up {
-          animation: beam-up 4s ease-in-out infinite;
-        }
-      `}</style>
+      <Motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 w-full max-w-2xl text-center"
+      >
+        {/* Animated 404 Text */}
+        <div className="relative inline-block mb-8">
+          <Motion.h1 
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="text-[10rem] md:text-[14rem] font-bold tracking-tighter leading-none select-none bg-clip-text text-transparent bg-linear-to-b from-slate-900 to-slate-400"
+          >
+            404
+          </Motion.h1>
+          
+          {/* Glassmorphic decorative ring */}
+          <Motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] border border-slate-200/60 rounded-full pointer-events-none"
+            style={{ maskImage: 'radial-gradient(circle, black 50%, transparent 70%)' }}
+          />
+        </div>
+
+        {/* Text Content */}
+        <Motion.div variants={itemVariants} className="space-y-4">
+          <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight">
+            Page not found
+          </h2>
+          <p className="text-lg text-slate-500 max-w-md mx-auto leading-relaxed">
+            The page you're trying to reach doesn't exist or has been moved to a new secure location.
+          </p>
+        </Motion.div>
+
+        {/* CTA Buttons */}
+        <Motion.div 
+          variants={itemVariants}
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <Motion.button
+            whileHover={{ scale: 1.02, translateY: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 px-8 py-3.5 cursor-pointer bg-[#1F6FEB] text-white rounded-xl font-medium shadow-lg shadow-blue-600/20 hover:bg-[#195CC7] transition-colors w-full sm:w-auto"
+          >
+            <LayoutDashboard size={18} />
+            Go to Dashboard
+          </Motion.button>
+
+          <Motion.button
+            whileHover={{ scale: 1.02, translateY: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 px-8 py-3.5 cursor-pointer bg-white text-slate-700 border border-slate-200 rounded-xl font-medium hover:bg-slate-50 transition-colors w-full sm:w-auto shadow-sm"
+          >
+            <ArrowLeft size={18} />
+            Back to Home
+          </Motion.button>
+        </Motion.div>
+
+        {/* Floating Data Nodes (Particles) */}
+        {[...Array(5)].map((_, i) => (
+          <Motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: [0.2, 0.5, 0.2],
+              y: [0, -30, 0],
+              x: [0, (i % 2 === 0 ? 15 : -15), 0]
+            }}
+            transition={{ 
+              duration: 5 + i, 
+              repeat: Infinity, 
+              delay: i * 0.5 
+            }}
+            className="absolute hidden md:block w-2 h-2 bg-blue-400 rounded-full blur-[1px]"
+            style={{
+              top: `${20 + (i * 15)}%`,
+              left: `${10 + (i * 20)}%`,
+            }}
+          />
+        ))}
+      </Motion.div>
     </div>
   );
 };

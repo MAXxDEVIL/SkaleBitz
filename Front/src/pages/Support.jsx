@@ -1,9 +1,11 @@
 import { Headset, LifeBuoy, Sparkles } from 'lucide-react';
+import Container from '../components/layout/Container';
 
 export default function Support() {
   return (
-    <div className="min-h-screen bg-[#F6F9FC] text-[#111827] flex items-center justify-center px-6 py-16">
-      <div className="relative w-full max-w-4xl">
+    <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
+      <Container className="flex items-center justify-center py-16">
+        <div className="relative w-full max-w-4xl">
         <div className="absolute inset-0 blur-3xl">
           <div className="h-full rounded-3xl bg-linear-to-br from-[#DCEBFF] via-[#E6F7FF] to-[#F4F3FF]" />
         </div>
@@ -13,7 +15,7 @@ export default function Support() {
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
               <Sparkles size={20} />
             </div>
-            FintechOS · Support
+            SkaleBitz · Support
           </div>
 
           <h1 className="text-3xl font-semibold text-[#0F172A]">How can we help?</h1>
@@ -38,7 +40,8 @@ export default function Support() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </Container>
     </div>
   );
 }

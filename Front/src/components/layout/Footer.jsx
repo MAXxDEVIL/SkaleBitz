@@ -1,34 +1,53 @@
-import { ShieldCheck, Sparkles } from 'lucide-react';
+import { ShieldCheck } from "lucide-react";
+import Container from "./Container";
 
 const sections = [
   {
-    title: 'Product',
-    links: ['Marketplace (MVP)', 'Risk & Controls (beta)', 'Payouts (beta)', 'API (coming soon)', 'Status'],
+    title: "Product",
+    links: [
+      "Marketplace (MVP)",
+      "Risk & Controls (beta)",
+      "Payouts (beta)",
+      "API (coming soon)",
+      "Status",
+    ],
   },
   {
-    title: 'Company',
-    links: ['About', 'Hackathon Story', 'Careers (future)', 'Press', 'Contact'],
+    title: "Company",
+    links: ["About", "Hackathon Story", "Careers (future)", "Press", "Contact"],
   },
   {
-    title: 'Legal',
-    links: ['Privacy (draft)', 'Terms (MVP)', 'AML/KYC Policy', 'Compliance Notes', 'Cookies'],
+    title: "Legal",
+    links: [
+      "Privacy (draft)",
+      "Terms (MVP)",
+      "AML/KYC Policy",
+      "Compliance Notes",
+      "Cookies",
+    ],
   },
 ];
 
 export default function Footer() {
   return (
     <footer className="border-t border-[#E5E7EB] bg-[#F8FAFC] text-[#0F172A]">
-      <div className="mx-auto max-w-6xl px-6 py-10 lg:px-8">
+      <Container className="py-10">
         <div className="grid gap-8 lg:grid-cols-5">
           <div className="space-y-3 lg:col-span-2">
             <div className="inline-flex items-center gap-2 text-lg font-semibold">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
-                <Sparkles size={20} />
+                <img
+                  src="/small.png"
+                  alt="SkaleBitz logo"
+                  className="h-8 w-8 object-contain"
+                />
               </div>
-              FintechOS (MVP)
+              SkaleBitz
             </div>
             <p className="text-sm text-[#4B5563]">
-              Hackathon build for a trust-first MSME capital marketplace. We’re iterating fast and plan to open-source the platform—follow along and contribute.
+              Hackathon build for a trust-first MSME capital marketplace. We’re
+              iterating fast and plan to open-source the platform—follow along
+              and contribute.
             </p>
             <div className="flex flex-wrap gap-3 text-sm text-[#4B5563]">
               <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 border border-[#E5E7EB]">
@@ -64,15 +83,28 @@ export default function Footer() {
 
         <div className="mt-6 flex flex-col gap-3 border-t border-[#E5E7EB] pt-4 text-sm text-[#4B5563] md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap gap-3">
-            <a className="hover:text-[#1F6FEB]" href="#">Privacy (draft)</a>
-            <a className="hover:text-[#1F6FEB]" href="#">Terms (MVP)</a>
-            <a className="hover:text-[#1F6FEB]" href="#">Cookies</a>
-            <a className="hover:text-[#1F6FEB]" href="#">Status</a>
-            <a className="hover:text-[#1F6FEB]" href="#">Open Source Roadmap</a>
+            <a className="hover:text-[#1F6FEB]" href="#">
+              Privacy (draft)
+            </a>
+            <a className="hover:text-[#1F6FEB]" href="#">
+              Terms (MVP)
+            </a>
+            <a className="hover:text-[#1F6FEB]" href="#">
+              Cookies
+            </a>
+            <a className="hover:text-[#1F6FEB]" href="#">
+              Status
+            </a>
+            <a className="hover:text-[#1F6FEB]" href="#">
+              Open Source Roadmap
+            </a>
           </div>
-          <div className="text-[#4B5563]">© {new Date().getFullYear()} FintechOS · Hackathon MVP · Open source soon</div>
+          <div className="text-[#4B5563]">
+            © {new Date().getFullYear()} SkaleBitz · Hackathon MVP · Open source
+            soon
+          </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

@@ -9,35 +9,64 @@ import {
   Sparkles,
   Tag,
   User,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import Container from "../components/layout/Container";
 
-const filters = ['All', 'KYC/KYB', 'Docs', 'Payouts', 'Risk'];
+const filters = ["All", "KYC/KYB", "Docs", "Payouts", "Risk"];
 const queue = [
-  { id: 'Q-1024', title: 'KYC: Nova Parts Co', type: 'KYC/KYB', owner: 'A. Reyes', status: 'In review', eta: '15m' },
-  { id: 'Q-1025', title: 'Docs: AgroLink MSME', type: 'Docs', owner: 'M. Chen', status: 'Waiting docs', eta: '—' },
-  { id: 'Q-1026', title: 'Payout: BrightMart Supplies', type: 'Payouts', owner: 'J. Patel', status: 'Pending approval', eta: '5m' },
-  { id: 'Q-1027', title: 'Risk alert: Retail bundle', type: 'Risk', owner: 'Ops Bot', status: 'Flagged', eta: '—' },
+  {
+    id: "Q-1024",
+    title: "KYC: Nova Parts Co",
+    type: "KYC/KYB",
+    owner: "A. Reyes",
+    status: "In review",
+    eta: "15m",
+  },
+  {
+    id: "Q-1025",
+    title: "Docs: AgroLink MSME",
+    type: "Docs",
+    owner: "M. Chen",
+    status: "Waiting docs",
+    eta: "—",
+  },
+  {
+    id: "Q-1026",
+    title: "Payout: BrightMart Supplies",
+    type: "Payouts",
+    owner: "J. Patel",
+    status: "Pending approval",
+    eta: "5m",
+  },
+  {
+    id: "Q-1027",
+    title: "Risk alert: Retail bundle",
+    type: "Risk",
+    owner: "Ops Bot",
+    status: "Flagged",
+    eta: "—",
+  },
 ];
 
 const statusBadge = (status) => {
   switch (status) {
-    case 'In review':
-      return 'bg-[#E6F0FF] text-[#1F6FEB]';
-    case 'Pending approval':
-      return 'bg-[#FEF3C7] text-[#B45309]';
-    case 'Flagged':
-      return 'bg-[#FEE2E2] text-[#B91C1C]';
-    case 'Waiting docs':
+    case "In review":
+      return "bg-[#E6F0FF] text-[#1F6FEB]";
+    case "Pending approval":
+      return "bg-[#FEF3C7] text-[#B45309]";
+    case "Flagged":
+      return "bg-[#FEE2E2] text-[#B91C1C]";
+    case "Waiting docs":
     default:
-      return 'bg-[#F8FAFC] text-[#4B5563]';
+      return "bg-[#F8FAFC] text-[#4B5563]";
   }
 };
 
 export default function OpsQueue() {
   return (
-    <div className="min-h-screen bg-[#F6F9FC] text-[#111827] px-6 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
+    <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
+      <Container className="flex flex-col gap-8 py-10">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -52,7 +81,7 @@ export default function OpsQueue() {
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
                 <Sparkles size={18} />
               </div>
-              FintechOS · Ops Queue
+              SkaleBitz · Ops Queue
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -76,9 +105,9 @@ export default function OpsQueue() {
             <button
               key={f}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition border ${
-                f === 'All'
-                  ? 'bg-[#1F6FEB] text-white border-[#1F6FEB]'
-                  : 'bg-white text-[#1F2937] border-[#E5E7EB] hover:border-[#CBD5E1]'
+                f === "All"
+                  ? "bg-[#1F6FEB] text-white border-[#1F6FEB]"
+                  : "bg-white text-[#1F2937] border-[#E5E7EB] hover:border-[#CBD5E1]"
               }`}
             >
               {f}
@@ -92,19 +121,32 @@ export default function OpsQueue() {
           <div className="lg:col-span-2 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Tasks</p>
-                <h2 className="text-xl font-semibold text-[#0F172A]">Ops queue</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Tasks
+                </p>
+                <h2 className="text-xl font-semibold text-[#0F172A]">
+                  Ops queue
+                </h2>
               </div>
               <Clock className="text-[#1F6FEB]" size={18} />
             </div>
 
             <div className="mt-4 divide-y divide-[#E5E7EB]">
               {queue.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-3">
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between py-3"
+                >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-[#0F172A]">{item.title}</span>
-                      <span className={`text-xs font-semibold rounded-full px-2 py-1 ${statusBadge(item.status)}`}>
+                      <span className="text-sm font-semibold text-[#0F172A]">
+                        {item.title}
+                      </span>
+                      <span
+                        className={`text-xs font-semibold rounded-full px-2 py-1 ${statusBadge(
+                          item.status
+                        )}`}
+                      >
                         {item.status}
                       </span>
                     </div>
@@ -123,9 +165,12 @@ export default function OpsQueue() {
                       </span>
                     </div>
                   </div>
-                  <Link className="text-sm font-semibold text-[#1F6FEB] hover:underline" to={`/ops/tasks/${item.id}`}>
-                     Open
-                   </Link>
+                  <Link
+                    className="text-sm font-semibold text-[#1F6FEB] hover:underline"
+                    to={`/ops/tasks/${item.id}`}
+                  >
+                    Open
+                  </Link>
                 </div>
               ))}
             </div>
@@ -140,9 +185,15 @@ export default function OpsQueue() {
             <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Now handling</p>
-                  <h3 className="text-lg font-semibold text-[#0F172A]">Payout: BrightMart Supplies</h3>
-                  <p className="text-sm text-[#4B5563]">Verify beneficiary and approve settlement</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                    Now handling
+                  </p>
+                  <h3 className="text-lg font-semibold text-[#0F172A]">
+                    Payout: BrightMart Supplies
+                  </h3>
+                  <p className="text-sm text-[#4B5563]">
+                    Verify beneficiary and approve settlement
+                  </p>
                 </div>
                 <ShieldCheck className="text-[#10B981]" size={18} />
               </div>
@@ -186,7 +237,7 @@ export default function OpsQueue() {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

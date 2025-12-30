@@ -105,3 +105,13 @@ export const resendVerification = async (req, res) => {
 
   res.json({ message: "Verification email sent" });
 };
+
+export const deleteAccount = async (req, res, next) => {
+  try {
+    const deleted = await User.findByIdAndDelete(req.user.id);
+    if (!deleted) throw createError(404, "Account not found");
+    res.json({ message: "Account deleted" });
+  } catch (err) {
+    next(err);
+  }
+};

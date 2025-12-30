@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { DEFAULT_TENOR_MONTHS } from "../utils/tenor.js";
 
 const dealSchema = new mongoose.Schema(
   {
@@ -16,7 +17,7 @@ const dealSchema = new mongoose.Schema(
     yieldPct: { type: Number, required: true },
     status: { type: String, default: "Active" },
     location: { type: String, trim: true },
-    tenorMonths: { type: Number },
+    tenorMonths: { type: Number, default: DEFAULT_TENOR_MONTHS },
     risk: { type: String, default: "On track" },
     liveVolume: { type: Number, default: 0 },
     cardVolume: { type: Number, default: 0 },

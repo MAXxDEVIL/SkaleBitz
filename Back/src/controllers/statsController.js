@@ -3,6 +3,7 @@ import { getDealsConnection } from "../db/dealsConnection.js";
 import { createDealModel } from "../models/Deal.js";
 import { createInvestmentModel } from "../models/Investment.js";
 import { createTransactionModel } from "../models/Transaction.js";
+import { ensureTenorMonths } from "../utils/tenor.js";
 
 const getDealModel = () => createDealModel(getDealsConnection());
 const getInvestmentModel = () => createInvestmentModel(getDealsConnection());
@@ -86,6 +87,8 @@ export const getOverviewStats = async (_req, res) => {
       .limit(3)
       .select("name sector amount yieldPct status location tenorMonths risk liveVolume");
   }
+
+  featuredDeals = featuredDeals.map((deal) => ensureTenorMonths(deal));
 
   res.json({ ...stats, featuredDeals });
 };
@@ -211,17 +214,18 @@ export const getInvestorDeals = async (req, res, next) => {
       const deal = inv.dealId;
       if (!deal) return;
       const key = String(deal._id);
+      const normalizedDeal = ensureTenorMonths(deal);
       const existing = dealsById.get(key) || {
         id: deal._id,
-        name: deal.name,
-        sector: deal.sector,
-        amount: deal.amount,
-        yieldPct: deal.yieldPct,
-        status: deal.status,
-        location: deal.location,
-        tenorMonths: deal.tenorMonths,
-        risk: deal.risk,
-        repaymentCadence: deal.repaymentCadence,
+        name: normalizedDeal.name,
+        sector: normalizedDeal.sector,
+        amount: normalizedDeal.amount,
+        yieldPct: normalizedDeal.yieldPct,
+        status: normalizedDeal.status,
+        location: normalizedDeal.location,
+        tenorMonths: normalizedDeal.tenorMonths,
+        risk: normalizedDeal.risk,
+        repaymentCadence: normalizedDeal.repaymentCadence,
         invested: 0,
         lastAllocationAt: inv.createdAt,
       };

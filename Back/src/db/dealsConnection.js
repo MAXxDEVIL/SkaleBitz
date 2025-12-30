@@ -1,7 +1,20 @@
 import mongoose from "mongoose";
 import { createDealModel } from "../models/Deal.js";
+import { DEFAULT_TENOR_MONTHS } from "../utils/tenor.js";
 
 let dealsConnection;
+
+const backfillTenorMonths = async (connection) => {
+  const Deal = createDealModel(connection);
+  const needsBackfill = await Deal.exists({
+    $or: [{ tenorMonths: { $exists: false } }, { tenorMonths: null }],
+  });
+  if (!needsBackfill) return;
+  await Deal.updateMany(
+    { $or: [{ tenorMonths: { $exists: false } }, { tenorMonths: null }] },
+    { $set: { tenorMonths: DEFAULT_TENOR_MONTHS } }
+  );
+};
 
   export const initDealsConnection = async () => {
   if (dealsConnection) return dealsConnection;
@@ -13,6 +26,7 @@ let dealsConnection;
   dealsConnection = mongoose.connection;
 
   await seedDeals(dealsConnection);
+  await backfillTenorMonths(dealsConnection);
   console.log("Deals initialized on primary MongoDB connection");
   return dealsConnection;
 };

@@ -5,6 +5,7 @@ import { createInvestmentModel } from "../models/Investment.js";
 import { createTransactionModel } from "../models/Transaction.js";
 import { createInvestmentWithTransaction } from "../services/investmentService.js";
 import User from "../models/User.js";
+import { DEFAULT_TENOR_MONTHS, ensureTenorMonths } from "../utils/tenor.js";
 
 const getDealModel = () => createDealModel(getDealsConnection());
 const getInvestmentModel = () => createInvestmentModel(getDealsConnection());
@@ -148,7 +149,7 @@ const computePerformanceMetrics = ({ repayments, cadence, startDate, totalInvest
 export const listDeals = async (_req, res) => {
   const Deal = getDealModel();
   const deals = await Deal.find({ verified: true }).sort({ createdAt: -1 });
-  res.json({ deals });
+  res.json({ deals: deals.map(ensureTenorMonths) });
 };
 
 export const getDeal = async (req, res) => {
@@ -191,9 +192,11 @@ export const getDeal = async (req, res) => {
     facilitySize: deal.amount,
   });
 
+    const dealPayload = ensureTenorMonths(deal);
+
   res.json({
     deal: {
-      ...deal.toObject(),
+      ...dealPayload,
       utilizedAmount,
       inflows,
       outflows,
@@ -354,7 +357,7 @@ export const createDeal = async (req, res) => {
     yieldPct: yieldPct ?? 0,
     status: status || "Active",
     location: location || country || registeredAddress || "",
-    tenorMonths: tenorMonths ?? null,
+    tenorMonths: tenorMonths ?? DEFAULT_TENOR_MONTHS,
     risk: risk || "On track",
     liveVolume: liveVolume ?? 0,
     cardVolume: cardVolume ?? 0,

@@ -5,6 +5,7 @@ export const signupSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).max(128).required(),
   accountType: Joi.string().valid("investor", "msme").required(),
+  termsAccepted: Joi.boolean().valid(true).required(),
 });
 
 export const signinSchema = Joi.object({

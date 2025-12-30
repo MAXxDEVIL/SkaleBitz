@@ -24,8 +24,13 @@ const sanitizeUser = (user) => ({
 });
 
 const resolveFacilitySize = (deal) => {
-  const raw = Number(deal?.facilitySize ?? deal?.amount ?? 10000);
+  const raw = Number(deal?.facilitySize ?? 10000);
   return Number.isFinite(raw) && raw > 0 ? raw : 10000;
+};
+
+const resolveTargetYield = (deal) => {
+  const raw = Number(deal?.targetYield ?? deal?.yieldPct ?? 0);
+  return Number.isFinite(raw) ? raw : 0;
 };
 
 const buildUtilizationMap = async (dealIds, Investment) => {
@@ -183,11 +188,14 @@ export const listDeals = async (_req, res) => {
     deals: deals.map((deal) => {
       const facilitySize = resolveFacilitySize(deal);
       const utilizedAmount = utilizationMap.get(String(deal._id)) || 0;
+      const normalizedYield = resolveTargetYield(deal);
       return ensureTenorMonths({
         ...deal,
         facilitySize,
         utilizedAmount,
         remainingCapacity: Math.max(0, facilitySize - utilizedAmount),
+        targetYield: normalizedYield,
+        yieldPct: normalizedYield,
       });
     }),
   });
@@ -235,11 +243,14 @@ export const getDeal = async (req, res) => {
     facilitySize,
   });
 
-    const dealPayload = ensureTenorMonths(deal);
+    const dealPayload = ensureTenorMonths(deal.toObject ? deal.toObject() : deal);
+    const normalizedYield = resolveTargetYield(dealPayload);
 
   res.json({
     deal: {
       ...dealPayload,
+      targetYield: normalizedYield,
+      yieldPct: normalizedYield,
       facilitySize,
       utilizedAmount,
       remainingCapacity,
@@ -279,6 +290,7 @@ export const getDealCashflows = async (req, res, next) => {
     let principalTotal = 0;
     let yieldTotal = 0;
 
+    const dealYieldPct = resolveTargetYield(deal);
     const payouts = repayments
       .map((tx, idx) => {
         const actualDate = tx?.createdAt ? new Date(tx.createdAt) : null;
@@ -289,7 +301,7 @@ export const getDealCashflows = async (req, res, next) => {
           fallbackIndex: idx,
         });
         const principal = Number(tx.amount || 0);
-        const yieldAmount = principal * Number(deal.yieldPct || 0) * PERCENT_TO_DECIMAL;
+        const yieldAmount = principal * dealYieldPct * PERCENT_TO_DECIMAL;
         principalTotal += principal;
         yieldTotal += yieldAmount;
         return {
@@ -311,7 +323,8 @@ export const getDealCashflows = async (req, res, next) => {
       deal: {
         id: deal._id,
         name: deal.name,
-        yieldPct: deal.yieldPct,
+        yieldPct: dealYieldPct,
+        targetYield: dealYieldPct,
       },
       payouts,
       totals: {
@@ -391,7 +404,8 @@ export const createDeal = async (req, res) => {
     businessName,
     sector,
     amount,
-    yieldPct,
+    yieldPct: yieldPctInput,
+    targetYield,
     status,
     location,
     tenorMonths,
@@ -425,11 +439,22 @@ export const createDeal = async (req, res) => {
     }
   }
 
-    const normalizedAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;
-  const normalizedFacilitySize = Number.isFinite(Number(facilitySizeInput))
-    ? Number(facilitySizeInput)
-    : normalizedAmount || 10000;
-  const finalAmount = normalizedAmount || normalizedFacilitySize;
+      const normalizedTargetYield = Number.isFinite(Number(targetYield ?? yieldPctInput))
+    ? Number(targetYield ?? yieldPctInput)
+    : null;
+  if (normalizedTargetYield == null) {
+    throw createError(400, "Target yield is required");
+  }
+
+  const amountProvided = Number.isFinite(Number(amount)) && Number(amount) > 0 ? Number(amount) : null;
+  const facilityProvided = facilitySizeInput !== undefined;
+  const facilityNumeric = Number(facilitySizeInput);
+  if (facilityProvided && (!Number.isFinite(facilityNumeric) || facilityNumeric <= 0)) {
+    throw createError(400, "Facility size must be a positive number");
+  }
+  const normalizedFacilitySize =
+    facilityProvided && Number.isFinite(facilityNumeric) && facilityNumeric > 0 ? facilityNumeric : 10000;
+  const finalAmount = amountProvided ?? normalizedFacilitySize;
 
   const deal = await Deal.create({
     name: businessName || "MSME Deal",
@@ -437,7 +462,8 @@ export const createDeal = async (req, res) => {
     amount: finalAmount,
     facilitySize: normalizedFacilitySize,
     utilizedAmount: 0,
-    yieldPct: yieldPct ?? 0,
+    targetYield: normalizedTargetYield,
+    yieldPct: normalizedTargetYield,
     status: status || "Active",
     location: location || country || registeredAddress || "",
     tenorMonths: tenorMonths ?? DEFAULT_TENOR_MONTHS,

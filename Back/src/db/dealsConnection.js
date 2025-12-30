@@ -15,7 +15,6 @@ const backfillTenorMonths = async (connection) => {
     { $set: { tenorMonths: DEFAULT_TENOR_MONTHS } }
   );
 };
-
   export const initDealsConnection = async () => {
   if (dealsConnection) return dealsConnection;
 
@@ -55,6 +54,7 @@ const seedDeals = async (connection) => {
       amount: 1500000,
       facilitySize: 1500000,
       utilizedAmount: 0,
+      targetYield: 11.8,
       yieldPct: 11.8,
       status: "Active",
       location: "Singapore",
@@ -73,6 +73,7 @@ const seedDeals = async (connection) => {
       amount: 900000,
       facilitySize: 900000,
       utilizedAmount: 0,
+      targetYield: 10.9,
       yieldPct: 10.9,
       status: "Active",
       location: "Malaysia",
@@ -91,6 +92,7 @@ const seedDeals = async (connection) => {
       amount: 1400000,
       facilitySize: 1400000,
       utilizedAmount: 0,
+      targetYield: 11.2,
       yieldPct: 11.2,
       status: "Pending",
       location: "Vietnam",

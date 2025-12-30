@@ -16,6 +16,7 @@ const dealSchema = new mongoose.Schema(
     facilitySize: { type: Number, default: 10000 },
     utilizedAmount: { type: Number, default: 0 },
     amount: { type: Number, required: true },
+    targetYield: { type: Number },
     yieldPct: { type: Number, required: true },
     status: { type: String, default: "Active" },
     location: { type: String, trim: true },

@@ -16,7 +16,7 @@ export const signup = async (req, res) => {
   const { error, value } = signupSchema.validate(req.body);
   if (error) throw createError(400, error.details[0].message);
 
-  const { email, password, name, accountType } = value;
+  const { email, password, name, accountType, termsAccepted } = value;
   const exists = await User.findOne({ email });
   if (exists) throw createError(409, "Email already registered");
 
@@ -29,6 +29,8 @@ export const signup = async (req, res) => {
     password: hashed,
     name,
     accountType,
+    termsAccepted,
+    termsAcceptedAt: termsAccepted ? new Date() : undefined,
     verified: false,
     verificationToken: token,
     verificationTokenExpires: tokenExpiry,

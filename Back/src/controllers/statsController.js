@@ -11,8 +11,13 @@ const getTransactionModel = () => createTransactionModel(getDealsConnection());
 const ACTIVE_STATUS = "Active";
 
 const resolveFacilitySize = (deal) => {
-  const raw = Number(deal?.facilitySize ?? deal?.amount ?? 10000);
+  const raw = Number(deal?.facilitySize ?? 10000);
   return Number.isFinite(raw) && raw > 0 ? raw : 10000;
+};
+
+const resolveTargetYield = (deal) => {
+  const raw = Number(deal?.targetYield ?? deal?.yieldPct ?? 0);
+  return Number.isFinite(raw) ? raw : 0;
 };
 
 const buildUtilizationMap = async (dealIds, Investment) => {
@@ -27,7 +32,8 @@ const buildUtilizationMap = async (dealIds, Investment) => {
 export const getOverviewStats = async (_req, res) => {
   const Deal = getDealModel();
   const Investment = getInvestmentModel();
-  const facilityField = { $ifNull: ["$facilitySize", { $ifNull: ["$amount", 10000] }] };
+  const facilityField = { $ifNull: ["$facilitySize", 10000] };
+  const yieldField = { $ifNull: ["$targetYield", "$yieldPct"] };
 
   const [summary] = await Deal.aggregate([
     {
@@ -58,7 +64,7 @@ export const getOverviewStats = async (_req, res) => {
           $avg: {
             $cond: [
               { $eq: [{ $toLower: { $ifNull: ["$status", ""] } }, "active"] },
-              "$yieldPct",
+              yieldField,
               null,
             ],
           },
@@ -96,14 +102,14 @@ export const getOverviewStats = async (_req, res) => {
   })
     .sort({ yieldPct: -1, facilitySize: -1, amount: -1, createdAt: -1 })
     .limit(3)
-    .select("name sector amount facilitySize yieldPct status location tenorMonths risk liveVolume")
+    .select("name sector amount facilitySize yieldPct targetYield status location tenorMonths risk liveVolume")
     .lean();
 
   if (featuredDeals.length === 0) {
     featuredDeals = await Deal.find({ verified: true })
       .sort({ createdAt: -1 })
       .limit(3)
-      .select("name sector amount facilitySize yieldPct status location tenorMonths risk liveVolume")
+      .select("name sector amount facilitySize yieldPct targetYield status location tenorMonths risk liveVolume")
       .lean();
   }
 
@@ -115,11 +121,14 @@ export const getOverviewStats = async (_req, res) => {
   featuredDeals = featuredDeals.map((deal) => {
     const facilitySize = resolveFacilitySize(deal);
     const utilizedAmount = utilizationMap.get(String(deal._id)) || 0;
+    const normalizedYield = resolveTargetYield(deal);
     return ensureTenorMonths({
       ...deal,
       facilitySize,
       utilizedAmount,
       remainingCapacity: Math.max(0, facilitySize - utilizedAmount),
+      targetYield: normalizedYield,
+      yieldPct: normalizedYield,
     });
   });
 
@@ -176,7 +185,7 @@ export const getInvestorDashboard = async (req, res, next) => {
 
     const investments = investorObjectId
       ? await Investment.find({ investorId: investorObjectId })
-          .populate({ path: "dealId", select: "name sector yieldPct status" })
+          .populate({ path: "dealId", select: "name sector yieldPct targetYield status" })
           .sort({ createdAt: -1 })
           .lean()
       : [];
@@ -192,7 +201,8 @@ export const getInvestorDashboard = async (req, res, next) => {
       const sector = deal.sector || "Unspecified";
 
       totalInvested += amount;
-      weightedYield += amount * Number(deal.yieldPct || 0);
+      const dealYield = resolveTargetYield(deal);
+      weightedYield += amount * dealYield;
       if (deal?._id) {
         dealIds.add(String(deal._id));
       }
@@ -274,7 +284,8 @@ export const getInvestorDeals = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .populate({
         path: "dealId",
-        select: "name sector amount yieldPct status location tenorMonths risk repaymentCadence verified",
+        select:
+          "name sector amount yieldPct targetYield status location tenorMonths risk repaymentCadence verified",
       })
       .lean();
 
@@ -290,7 +301,8 @@ export const getInvestorDeals = async (req, res, next) => {
         name: normalizedDeal.name,
         sector: normalizedDeal.sector,
         amount: normalizedDeal.amount,
-        yieldPct: normalizedDeal.yieldPct,
+        yieldPct: resolveTargetYield(normalizedDeal),
+        targetYield: resolveTargetYield(normalizedDeal),
         status: normalizedDeal.status,
         location: normalizedDeal.location,
         tenorMonths: normalizedDeal.tenorMonths,

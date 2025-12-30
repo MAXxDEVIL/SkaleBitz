@@ -1,23 +1,71 @@
 import { useState } from 'react';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, User, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { signup } from '../services/authService';
 
 export default function Register() {
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirm: '',
+    accountType: 'investor',
+  });
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+    const handleChange = (field) => (e) => {
+    const { value } = e.target;
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAccountType = (value) => {
+    setForm((prev) => ({ ...prev, accountType: value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirm) {
+    setError('');
+    setSuccess('');
+    if (form.password !== form.confirm) {
       setError('Passwords must match.');
       return;
     }
-    setError('');
-    // submit logic here (e.g., API call)
+
+
+    try {
+      setLoading(true);
+      await signup({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+        accountType: form.accountType,
+      });
+      setSuccess('Signup successful. Check your email to verify your account.');
+      setForm({ name: '', email: '', password: '', confirm: '', accountType: 'investor' });
+    } catch (err) {
+      const apiError = err.response?.data?.error || err.response?.data?.message;
+      setError(apiError || 'Unable to create your account right now.');
+    } finally {
+      setLoading(false);
+    }
   };
+
+    const accountOptions = [
+    {
+      value: 'investor',
+      title: 'Investor account',
+      description: 'Discover vetted MSME opportunities and track returns in one place.',
+    },
+    {
+      value: 'msme',
+      title: 'MSME account',
+      description: 'Raise working capital, manage disbursements, and stay funder-ready.',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#F6F9FC] text-[#111827] flex items-center justify-center px-6 py-16">
@@ -62,6 +110,8 @@ export default function Register() {
                 <div className="mt-2 flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                   <User size={18} className="text-[#1F6FEB]" />
                   <input
+                    value={form.name}
+                    onChange={handleChange('name')}
                     type="text"
                     placeholder="Alex Morgan"
                     className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
@@ -74,6 +124,8 @@ export default function Register() {
                 <div className="mt-2 flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                   <Mail size={18} className="text-[#1F6FEB]" />
                   <input
+                    value={form.email}
+                    onChange={handleChange('email')}
                     type="email"
                     placeholder="you@company.com"
                     className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
@@ -81,14 +133,41 @@ export default function Register() {
                 </div>
               </label>
 
+              <div className="space-y-2">
+                <span className="text-sm font-medium text-[#0F172A]">Account type</span>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {accountOptions.map((option) => {
+                    const isActive = form.accountType === option.value;
+                    return (
+                      <button
+                        type="button"
+                        key={option.value}
+                        onClick={() => handleAccountType(option.value)}
+                        className={`rounded-2xl border px-4 py-3 text-left transition ${
+                          isActive
+                            ? 'border-[#1F6FEB] bg-[#E6F0FF] shadow-sm shadow-[#1F6FEB33]'
+                            : 'border-[#E5E7EB] bg-white hover:border-[#1F6FEB]'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-sm font-semibold text-[#0F172A]">{option.title}</span>
+                          {isActive && <ShieldCheck size={16} className="text-[#1F6FEB]" />}
+                        </div>
+                        <p className="mt-1 text-sm text-[#4B5563]">{option.description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <label className="block">
                 <span className="text-sm font-medium text-[#0F172A]">Password</span>
                 <div className="mt-2 flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                   <Lock size={18} className="text-[#1F6FEB]" />
                   <input
                     type={showPass ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={form.password}
+                    onChange={handleChange('password')}
                     placeholder="••••••••"
                     className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                   />
@@ -109,8 +188,8 @@ export default function Register() {
                   <Lock size={18} className="text-[#1F6FEB]" />
                   <input
                     type={showConfirm ? 'text' : 'password'}
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
+                    value={form.confirm}
+                    onChange={handleChange('confirm')}
                     placeholder="••••••••"
                     className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                   />
@@ -132,13 +211,15 @@ export default function Register() {
               </label>
 
               {error && <p className="text-sm font-semibold text-[#DC2626]">{error}</p>}
+              {success && <p className="text-sm font-semibold text-[#15803D]">{success}</p>}
             </div>
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1F6FEB] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7]"
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1F6FEB] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7] disabled:cursor-not-allowed disabled:opacity-80"
             >
-              Create account
+              {loading ? 'Creating account...' : 'Create account'}
               <ArrowRight size={18} />
             </button>
 

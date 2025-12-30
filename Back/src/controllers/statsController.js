@@ -181,3 +181,117 @@ export const getInvestorDashboard = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getInvestorDeals = async (req, res, next) => {
+  try {
+    const investorId = req.user?.id;
+    const investorObjectId =
+      investorId && mongoose.Types.ObjectId.isValid(investorId)
+        ? new mongoose.Types.ObjectId(investorId)
+        : null;
+
+    if (!investorObjectId) {
+      return res.json({ deals: [] });
+    }
+
+    const Investment = getInvestmentModel();
+    const Deal = getDealModel();
+
+    const investments = await Investment.find({ investorId: investorObjectId })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "dealId",
+        select: "name sector amount yieldPct status location tenorMonths risk repaymentCadence verified",
+      })
+      .lean();
+
+    const dealsById = new Map();
+
+    investments.forEach((inv) => {
+      const deal = inv.dealId;
+      if (!deal) return;
+      const key = String(deal._id);
+      const existing = dealsById.get(key) || {
+        id: deal._id,
+        name: deal.name,
+        sector: deal.sector,
+        amount: deal.amount,
+        yieldPct: deal.yieldPct,
+        status: deal.status,
+        location: deal.location,
+        tenorMonths: deal.tenorMonths,
+        risk: deal.risk,
+        repaymentCadence: deal.repaymentCadence,
+        invested: 0,
+        lastAllocationAt: inv.createdAt,
+      };
+      existing.invested += Number(inv.amount || 0);
+      if (inv.createdAt && (!existing.lastAllocationAt || inv.createdAt > existing.lastAllocationAt)) {
+        existing.lastAllocationAt = inv.createdAt;
+      }
+      dealsById.set(key, existing);
+    });
+
+    const deals = Array.from(dealsById.values()).sort(
+      (a, b) => new Date(b.lastAllocationAt || 0) - new Date(a.lastAllocationAt || 0)
+    );
+
+    res.json({ deals });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getInvestorLogs = async (req, res, next) => {
+  try {
+    const investorId = req.user?.id;
+    const investorObjectId =
+      investorId && mongoose.Types.ObjectId.isValid(investorId)
+        ? new mongoose.Types.ObjectId(investorId)
+        : null;
+
+    if (!investorObjectId) {
+      return res.json({ logs: [] });
+    }
+
+    const Transaction = getTransactionModel();
+    const Investment = getInvestmentModel();
+
+    const transactions = await Transaction.find({
+      $or: [{ fromUserId: investorObjectId }, { toUserId: investorObjectId }],
+    })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean();
+
+    const investmentIds = transactions
+      .map((tx) => tx.investmentId)
+      .filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+    let investments = [];
+    if (investmentIds.length) {
+      investments = await Investment.find({ _id: { $in: investmentIds } })
+        .populate({ path: "dealId", select: "name" })
+        .lean();
+    }
+
+    const dealNameByInvestment = new Map(
+      investments.map((inv) => [String(inv._id), inv.dealId?.name || "Deal"])
+    );
+
+    const logs = transactions.map((tx) => ({
+      id: tx._id,
+      investmentId: tx.investmentId,
+      dealName: dealNameByInvestment.get(String(tx.investmentId)) || "Deal",
+      amount: tx.amount,
+      type: tx.type,
+      createdAt: tx.createdAt,
+      direction:
+        tx.fromUserId && String(tx.fromUserId) === String(investorObjectId) ? "outgoing" : "incoming",
+    }));
+
+    res.json({ logs });
+  } catch (err) {
+    next(err);
+  }
+};

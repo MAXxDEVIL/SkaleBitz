@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck, User, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { signup } from '../services/authService';
+import Container from '../components/layout/Container';
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ export default function Register() {
     password: '',
     confirm: '',
     accountType: 'investor',
+    termsAccepted: false,
   });
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -17,9 +19,14 @@ export default function Register() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-    const handleChange = (field) => (e) => {
+  const handleChange = (field) => (e) => {
     const { value } = e.target;
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleTermsChange = (e) => {
+    const { checked } = e.target;
+    setForm((prev) => ({ ...prev, termsAccepted: checked }));
   };
 
   const handleAccountType = (value) => {
@@ -30,11 +37,14 @@ export default function Register() {
     e.preventDefault();
     setError('');
     setSuccess('');
+    if (!form.termsAccepted) {
+      setError('You must agree to the Terms & Conditions.');
+      return;
+    }
     if (form.password !== form.confirm) {
       setError('Passwords must match.');
       return;
     }
-
 
     try {
       setLoading(true);
@@ -43,9 +53,10 @@ export default function Register() {
         email: form.email.trim(),
         password: form.password,
         accountType: form.accountType,
+        termsAccepted: form.termsAccepted,
       });
       setSuccess('Signup successful. Check your email to verify your account.');
-      setForm({ name: '', email: '', password: '', confirm: '', accountType: 'investor' });
+      setForm({ name: '', email: '', password: '', confirm: '', accountType: 'investor', termsAccepted: false });
     } catch (err) {
       const apiError = err.response?.data?.error || err.response?.data?.message;
       setError(apiError || 'Unable to create your account right now.');
@@ -54,7 +65,7 @@ export default function Register() {
     }
   };
 
-    const accountOptions = [
+  const accountOptions = [
     {
       value: 'investor',
       title: 'Investor account',
@@ -66,19 +77,20 @@ export default function Register() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F6F9FC] text-[#111827] flex items-center justify-center px-6 py-16">
-      <div className="relative w-full max-w-5xl">
-        <div className="absolute inset-0 blur-3xl">
-          <div className="h-full rounded-3xl bg-linear-to-br from-[#DCEBFF] via-[#E6F7FF] to-[#F4F3FF]" />
-        </div>
+    <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
+      <Container className="flex items-center justify-center py-16">
+        <div className="relative w-full max-w-5xl">
+          <div className="absolute inset-0 blur-3xl">
+            <div className="h-full rounded-3xl bg-linear-to-br from-[#DCEBFF] via-[#E6F7FF] to-[#F4F3FF]" />
+          </div>
 
-        <div className="relative grid gap-10 rounded-3xl border border-[#E5E7EB] bg-white p-10 shadow-2xl shadow-[#E0E7FF] lg:grid-cols-2">
+          <div className="relative grid gap-10 rounded-3xl border border-[#E5E7EB] bg-white p-10 shadow-2xl shadow-[#E0E7FF] lg:grid-cols-2">
           <div className="space-y-6">
             <div className="flex items-center gap-3 text-sm font-semibold text-[#1F6FEB]">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
                 <Sparkles size={20} />
               </div>
-              FintechOS
+              SkaleBitz
             </div>
 
             <div className="space-y-3">
@@ -202,9 +214,14 @@ export default function Register() {
               </label>
 
               <label className="flex items-start gap-2 text-sm text-[#4B5563]">
-                <input type="checkbox" className="mt-1 h-4 w-4 rounded border-[#CBD5E1] text-[#1F6FEB] focus:ring-[#1F6FEB]" />
+                <input
+                  type="checkbox"
+                  checked={form.termsAccepted}
+                  onChange={handleTermsChange}
+                  className="mt-1 h-4 w-4 rounded border-[#CBD5E1] text-[#1F6FEB] focus:ring-[#1F6FEB]"
+                />
                 <span>
-                  I agree to the <Link to="/terms" className="text-[#1F6FEB] underline">Terms</Link> and <Link to="/privacy" className="text-[#1F6FEB] underline">Privacy Policy</Link>.
+                 I agree to the <Link to="/terms" className="text-[#1F6FEB] underline">Terms</Link> and <Link to="/privacy" className="text-[#1F6FEB] underline">Privacy Policy</Link>.
                 </span>
               </label>
 
@@ -214,7 +231,7 @@ export default function Register() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !form.termsAccepted}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1F6FEB] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7] disabled:cursor-not-allowed disabled:opacity-80"
             >
               {loading ? 'Creating account...' : 'Create account'}
@@ -223,9 +240,9 @@ export default function Register() {
 
             <p className="text-center text-sm text-[#4B5563]">
               Already have an account?{' '}
-              <Link to="/login" className="text-[#1F6FEB] font-semibold hover:underline">
-                Sign in
-              </Link>
+               <Link to="/login" className="text-[#1F6FEB] font-semibold hover:underline">
+                 Sign in
+               </Link>
             </p>
 
             <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAFC] p-4 text-sm text-[#4B5563]">
@@ -239,7 +256,8 @@ export default function Register() {
             </div>
           </form>
         </div>
-      </div>
+        </div>
+      </Container>
     </div>
   );
 }

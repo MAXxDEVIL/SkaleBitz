@@ -1,17 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, Sparkles } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { signin } from '../services/authService';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { requestPasswordReset, signin } from '../services/authService';
 import useAuth from '../hooks/useAuth';
+import Container from '../components/layout/Container';
 
-const MSME_ROUTE = '/msme/dashboard';
-const DASHBOARD_ROUTE = '/dashboard';
+const LANDING_ROUTE = '/';
 
 export default function Login() {
   const navigate = useNavigate();
-    const { login, logout } = useAuth();
+  const { login, logout } = useAuth();
+  const [searchParams] = useSearchParams();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
+  const [resetNotice, setResetNotice] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
@@ -23,6 +26,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setResetNotice('');
     logout();
     try {
       setLoading(true);
@@ -30,9 +34,8 @@ export default function Login() {
         email: form.email.trim(),
         password: form.password,
       });
-      login(data.token, data.user);
-      const destination = data.user?.accountType === 'msme' ? MSME_ROUTE : DASHBOARD_ROUTE;
-      navigate(destination, { replace: true });
+      login(data.token, data.user, remember);
+      navigate(LANDING_ROUTE, { replace: true });
     } catch (err) {
       const apiError = err.response?.data?.error || err.response?.data?.message;
       setError(apiError || 'Unable to sign you in right now.');
@@ -41,20 +44,43 @@ export default function Login() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#F6F9FC] text-[#111827] flex items-center justify-center px-6 py-16">
-      <div className="relative w-full max-w-4xl">
-        <div className="absolute inset-0 blur-3xl">
-          <div className="h-full rounded-3xl bg-linear-to-br from-[#DCEBFF] via-[#E6F7FF] to-[#F4F3FF]" />
-        </div>
+  const handleForgotPassword = async () => {
+    setError('');
+    setResetNotice('');
+    if (!form.email.trim()) {
+      setError('Enter your email to receive reset instructions.');
+      return;
+    }
+    try {
+      const data = await requestPasswordReset(form.email.trim());
+      setResetNotice(data?.message || 'If that account exists, we sent a reset email.');
+    } catch (err) {
+      const apiError = err.response?.data?.error || err.response?.data?.message;
+      setError(apiError || 'Unable to send reset email right now.');
+    }
+  };
 
-        <div className="relative grid gap-10 rounded-3xl border border-[#E5E7EB] bg-white p-10 shadow-2xl shadow-[#E0E7FF] lg:grid-cols-2">
+  useEffect(() => {
+    if (searchParams.get('email-changed')) {
+      setResetNotice('Your email has been updated. Please sign in with the new address.');
+    }
+  }, [searchParams]);
+
+  return (
+    <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
+      <Container className="flex items-center justify-center py-16">
+        <div className="relative w-full max-w-4xl">
+          <div className="absolute inset-0 blur-3xl">
+            <div className="h-full rounded-3xl bg-linear-to-br from-[#DCEBFF] via-[#E6F7FF] to-[#F4F3FF]" />
+          </div>
+
+          <div className="relative grid gap-10 rounded-3xl border border-[#E5E7EB] bg-white p-10 shadow-2xl shadow-[#E0E7FF] lg:grid-cols-2">
           <div className="space-y-6">
             <div className="flex items-center gap-3 text-sm font-semibold text-[#1F6FEB]">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
                 <Sparkles size={20} />
               </div>
-              FintechOS
+              SkaleBitz
             </div>
 
             <div className="space-y-3">
@@ -112,33 +138,46 @@ export default function Login() {
 
               <div className="flex items-center justify-between text-sm text-[#4B5563]">
                 <label className="flex items-center gap-2">
-                  <input type="checkbox" className="h-4 w-4 rounded border-[#CBD5E1] text-[#1F6FEB] focus:ring-[#1F6FEB]" />
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="h-4 w-4 rounded border-[#CBD5E1] text-[#1F6FEB] focus:ring-[#1F6FEB]"
+                  />
                   <span>Remember me</span>
                 </label>
-                <Link to="/reset" className="text-[#1F6FEB] font-semibold hover:underline">Forgot password?</Link>
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="text-[#1F6FEB] font-semibold hover:underline"
+                >
+                  Forgot password?
+                </button>
               </div>
 
               {error && <p className="text-sm font-semibold text-[#DC2626]">{error}</p>}
+              {resetNotice && <p className="text-sm font-semibold text-[#16A34A]">{resetNotice}</p>}
             </div>
 
             <button
               type="submit"
               disabled={loading}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1F6FEB] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7] disabled:cursor-not-allowed disabled:opacity-80"
-              >
+            >
               {loading ? 'Signing in...' : 'Sign in'}
               <ArrowRight size={18} />
             </button>
 
-            <p className="text-center text-sm text-[#4B5563]">
-              New to FintechOS?{' '}
-              <Link to="/register" className="text-[#1F6FEB] font-semibold hover:underline">
-                Create an account
-              </Link>
-            </p>
+          <p className="text-center text-sm text-[#4B5563]">
+            New to SkaleBitz?{' '}
+            <Link to="/register" className="text-[#1F6FEB] font-semibold hover:underline">
+              Create an account
+            </Link>
+          </p>
           </form>
         </div>
       </div>
+      </Container>
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowUpRight,
   BarChart3,
@@ -9,24 +9,30 @@ import {
   Plus,
   ShieldCheck,
   Sparkles,
-} from 'lucide-react';
-import { fetchInvestorDashboard } from '../services/statsService';
-import { formatCurrency, formatPercent } from '../utils/formatters';
-import useAuth from '../hooks/useAuth';
-import Container from '../components/layout/Container';
+} from "lucide-react";
+import { fetchInvestorDashboard } from "../services/statsService";
+import { formatCurrency, formatPercent } from "../utils/formatters";
+import useAuth from "../hooks/useAuth";
+import Container from "../components/layout/Container";
 
 export default function InvestorDashboard() {
   const navigate = useNavigate();
   const { userId } = useParams();
   const { user, refreshUser } = useAuth();
   const normalizedUserId = user?.id ? String(user.id) : null;
-  const hasUserMismatch = Boolean(userId && normalizedUserId && userId !== normalizedUserId);
-  const [stats, setStats] = useState({ totalInvested: 0, averageYield: 0, activeDeals: 0 });
+  const hasUserMismatch = Boolean(
+    userId && normalizedUserId && userId !== normalizedUserId
+  );
+  const [stats, setStats] = useState({
+    totalInvested: 0,
+    averageYield: 0,
+    activeDeals: 0,
+  });
   const [allocationData, setAllocationData] = useState([]);
   const [recentDeals, setRecentDeals] = useState([]);
   const [activity, setActivity] = useState([]);
   const [loadingDashboard, setLoadingDashboard] = useState(true);
-  const [statsError, setStatsError] = useState('');
+  const [statsError, setStatsError] = useState("");
   const resetDashboardState = useCallback(() => {
     setStats({ totalInvested: 0, averageYield: 0, activeDeals: 0 });
     setAllocationData([]);
@@ -42,7 +48,7 @@ export default function InvestorDashboard() {
 
   useEffect(() => {
     const loadStats = async () => {
-      setStatsError('');
+      setStatsError("");
       setLoadingDashboard(true);
       if (!user?.id) {
         resetDashboardState();
@@ -61,10 +67,10 @@ export default function InvestorDashboard() {
         setActivity(data?.activity || []);
       } catch (err) {
         if (import.meta.env.DEV) {
-          console.error('Failed to load investor dashboard data', err);
+          console.error("Failed to load investor dashboard data", err);
         }
         resetDashboardState();
-        setStatsError('Unable to load dashboard data right now.');
+        setStatsError("Unable to load dashboard data right now.");
       } finally {
         setLoadingDashboard(false);
       }
@@ -86,31 +92,43 @@ export default function InvestorDashboard() {
     loadProfile();
   }, [refreshUser]);
 
-  const displayName = user?.name || 'Investor';
+  const displayName = user?.name || "Investor";
   const balance = user?.balance ?? 0;
   const summaryCards = useMemo(
     () => [
-      { label: 'Total invested', value: formatCurrency(stats.totalInvested), icon: Banknote },
-      { label: 'Active investments', value: String(stats.activeDeals ?? 0), icon: LineChart },
-      { label: 'Avg. yield', value: formatPercent(stats.averageYield || 0, 1), icon: BarChart3 },
+      {
+        label: "Total invested",
+        value: formatCurrency(stats.totalInvested),
+        icon: Banknote,
+      },
+      {
+        label: "Active investments",
+        value: String(stats.activeDeals ?? 0),
+        icon: LineChart,
+      },
+      {
+        label: "Avg. yield",
+        value: formatPercent(stats.averageYield || 0, 1),
+        icon: BarChart3,
+      },
     ],
     [stats.activeDeals, stats.averageYield, stats.totalInvested]
   );
   const formatActivityTitle = (type) => {
-    if (type === 'repayment') return 'Repayment received';
-    if (type === 'refund') return 'Allocation refunded';
-    return 'Allocation placed';
+    if (type === "repayment") return "Repayment received";
+    if (type === "refund") return "Allocation refunded";
+    return "Allocation placed";
   };
   const formatActivityDescription = (item) =>
-    `${formatCurrency(item.amount || 0)} · ${item.dealName || 'Deal'}`;
+    `${formatCurrency(item.amount || 0)} · ${item.dealName || "Deal"}`;
   const formatActivityTime = (value) => {
-    if (!value) return '';
+    if (!value) return "";
     const date = new Date(value);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -135,7 +153,7 @@ export default function InvestorDashboard() {
               </span>
               <button
                 type="button"
-                onClick={() => navigate('/balance')}
+                onClick={() => navigate("/balance")}
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1F6FEB] text-white transition hover:bg-[#195cc7]"
                 aria-label="Top up balance"
               >
@@ -144,7 +162,7 @@ export default function InvestorDashboard() {
             </div>
             <button
               type="button"
-              onClick={() => navigate('/deals')}
+              onClick={() => navigate("/deals")}
               className="inline-flex items-center gap-2 rounded-full bg-[#1F6FEB] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#1F6FEB33] transition hover:bg-[#195cc7]"
             >
               New investment
@@ -174,7 +192,9 @@ export default function InvestorDashboard() {
                     {hasIcon && <IconComponent size={18} />}
                   </span>
                 </div>
-                <p className="mt-3 text-2xl font-semibold text-[#0F172A]">{value}</p>
+                <p className="mt-3 text-2xl font-semibold text-[#0F172A]">
+                  {value}
+                </p>
               </div>
             );
           })}
@@ -185,8 +205,12 @@ export default function InvestorDashboard() {
           <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF] lg:col-span-2">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Portfolio</p>
-                <h2 className="text-xl font-semibold text-[#0F172A]">Allocation by strategy</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Portfolio
+                </p>
+                <h2 className="text-xl font-semibold text-[#0F172A]">
+                  Allocation by strategy
+                </h2>
               </div>
               <PieChart className="text-[#1F6FEB]" size={20} />
             </div>
@@ -202,7 +226,9 @@ export default function InvestorDashboard() {
                   className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-4"
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-[#0F172A]">{item.sector}</p>
+                    <p className="text-sm font-semibold text-[#0F172A]">
+                      {item.sector}
+                    </p>
                     <span className="text-sm font-semibold text-[#1F6FEB]">
                       {Number(item.percent || 0).toFixed(1)}%
                     </span>
@@ -213,7 +239,9 @@ export default function InvestorDashboard() {
                       style={{ width: `${item.percent || 0}%` }}
                     />
                   </div>
-                  <p className="mt-2 text-xs text-[#4B5563]">{formatCurrency(item.amount || 0)} invested</p>
+                  <p className="mt-2 text-xs text-[#4B5563]">
+                    {formatCurrency(item.amount || 0)} invested
+                  </p>
                 </div>
               ))}
             </div>
@@ -222,8 +250,12 @@ export default function InvestorDashboard() {
           <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Risk</p>
-                <h2 className="text-xl font-semibold text-[#0F172A]">Controls</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Risk
+                </p>
+                <h2 className="text-xl font-semibold text-[#0F172A]">
+                  Controls
+                </h2>
               </div>
               <ShieldCheck className="text-[#10B981]" size={20} />
             </div>
@@ -244,19 +276,30 @@ export default function InvestorDashboard() {
           <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Pipeline</p>
-                <h2 className="text-xl font-semibold text-[#0F172A]">Recent deals</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Pipeline
+                </p>
+                <h2 className="text-xl font-semibold text-[#0F172A]">
+                  Recent deals
+                </h2>
               </div>
               <LineChart className="text-[#1F6FEB]" size={20} />
             </div>
             <div className="mt-4 divide-y divide-[#E5E7EB]">
               {recentDeals.length === 0 && !loadingDashboard && (
-                <div className="py-3 text-sm text-[#4B5563]">No recent allocations yet.</div>
+                <div className="py-3 text-sm text-[#4B5563]">
+                  No recent allocations yet.
+                </div>
               )}
               {recentDeals.map((deal) => (
-                <div key={deal.investmentId || deal.name} className="py-3 flex items-center justify-between">
+                <div
+                  key={deal.investmentId || deal.name}
+                  className="py-3 flex items-center justify-between"
+                >
                   <div>
-                    <p className="text-sm font-semibold text-[#0F172A]">{deal.name}</p>
+                    <p className="text-sm font-semibold text-[#0F172A]">
+                      {deal.name}
+                    </p>
                     <p className="text-xs text-[#4B5563]">{deal.sector}</p>
                   </div>
                   <div className="text-right">
@@ -270,7 +313,7 @@ export default function InvestorDashboard() {
             </div>
             <button
               type="button"
-              onClick={() => navigate('/investor/deals')}
+              onClick={() => navigate("/investor/deals")}
               className="mt-4 w-full rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-semibold text-[#1F2937] transition hover:border-[#CBD5E1]"
             >
               View all deals
@@ -280,8 +323,12 @@ export default function InvestorDashboard() {
           <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Ops</p>
-                <h2 className="text-xl font-semibold text-[#0F172A]">Activity</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Ops
+                </p>
+                <h2 className="text-xl font-semibold text-[#0F172A]">
+                  Activity
+                </h2>
               </div>
               <BarChart3 className="text-[#1F6FEB]" size={20} />
             </div>
@@ -299,14 +346,18 @@ export default function InvestorDashboard() {
                   <p className="text-sm font-semibold text-[#0F172A]">
                     {formatActivityTitle(item.type)}
                   </p>
-                  <p className="text-sm text-[#4B5563]">{formatActivityDescription(item)}</p>
-                  <p className="text-xs text-[#0EA5E9] mt-1">{formatActivityTime(item.createdAt)}</p>
+                  <p className="text-sm text-[#4B5563]">
+                    {formatActivityDescription(item)}
+                  </p>
+                  <p className="text-xs text-[#0EA5E9] mt-1">
+                    {formatActivityTime(item.createdAt)}
+                  </p>
                 </div>
               ))}
             </div>
             <button
               type="button"
-              onClick={() => navigate('/investor/logs')}
+              onClick={() => navigate("/investor/logs")}
               className="mt-4 w-full rounded-full border border-[#E5E7EB] px-4 py-2 text-sm font-semibold text-[#1F2937] transition hover:border-[#CBD5E1]"
             >
               View logs

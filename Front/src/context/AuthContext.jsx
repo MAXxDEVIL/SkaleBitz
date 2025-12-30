@@ -1,10 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useCallback, useState } from 'react';
-import { clearAuthToken, setAuthToken } from '../services/api';
-import { deleteAccount as deleteAccountRequest } from '../services/authService';
-import { fetchProfile } from '../services/userService';
+import { createContext, useCallback, useState } from "react";
+import { clearAuthToken, setAuthToken } from "../services/api";
+import { deleteAccount as deleteAccountRequest } from "../services/authService";
+import { fetchProfile } from "../services/userService";
 
-const STORAGE_KEY = 'auth_state';
+const STORAGE_KEY = "auth_state";
 
 const DEFAULT_AUTH_STATE = { token: null, user: null, storageType: null };
 
@@ -19,7 +19,7 @@ const parseStoredAuth = (storage) => {
     }
   } catch (e) {
     if (import.meta.env.DEV) {
-      console.warn('Failed to parse saved auth state', e);
+      console.warn("Failed to parse saved auth state", e);
     }
   }
   storage.removeItem(STORAGE_KEY);
@@ -40,25 +40,27 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const loadStored = () => {
-    if (typeof window === 'undefined') return DEFAULT_AUTH_STATE;
+    if (typeof window === "undefined") return DEFAULT_AUTH_STATE;
     const persistent = parseStoredAuth(localStorage);
     if (persistent) {
       setAuthToken(persistent.token);
-      return { ...persistent, storageType: 'local' };
+      return { ...persistent, storageType: "local" };
     }
     const sessionAuth = parseStoredAuth(sessionStorage);
     if (sessionAuth) {
       setAuthToken(sessionAuth.token);
-      return { ...sessionAuth, storageType: 'session' };
+      return { ...sessionAuth, storageType: "session" };
     }
     return DEFAULT_AUTH_STATE;
   };
 
-  const [{ token, user, storageType }, setAuthState] = useState(() => loadStored());
+  const [{ token, user, storageType }, setAuthState] = useState(() =>
+    loadStored()
+  );
   const [ready] = useState(true);
 
   const persist = useCallback((nextToken, nextUser, remember = false) => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
@@ -69,7 +71,11 @@ export function AuthProvider({ children }) {
       setAuthToken(nextToken);
       writeAuth(targetStorage, payload);
       clearAuth(otherStorage);
-      setAuthState({ token: nextToken, user: nextUser || null, storageType: remember ? 'local' : 'session' });
+      setAuthState({
+        token: nextToken,
+        user: nextUser || null,
+        storageType: remember ? "local" : "session",
+      });
     } else {
       clearAuthToken();
       clearAuth(localStorage);
@@ -78,7 +84,10 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = useCallback((nextToken, nextUser, remember) => persist(nextToken, nextUser, remember), [persist]);
+  const login = useCallback(
+    (nextToken, nextUser, remember) => persist(nextToken, nextUser, remember),
+    [persist]
+  );
   const logout = useCallback(() => persist(null, null), [persist]);
 
   const updateUser = useCallback((nextUser) => {
@@ -87,9 +96,14 @@ export function AuthProvider({ children }) {
         return DEFAULT_AUTH_STATE;
       }
       const payload = { token: prev.token, user: nextUser || null };
-      const targetStorage = prev.storageType === 'session' ? sessionStorage : localStorage;
+      const targetStorage =
+        prev.storageType === "session" ? sessionStorage : localStorage;
       writeAuth(targetStorage, payload);
-      return { token: prev.token, user: nextUser || null, storageType: prev.storageType };
+      return {
+        token: prev.token,
+        user: nextUser || null,
+        storageType: prev.storageType,
+      };
     });
   }, []);
 
@@ -100,7 +114,7 @@ export function AuthProvider({ children }) {
       return profile;
     } catch (err) {
       if (import.meta.env.DEV) {
-        console.warn('Failed to refresh user profile', err);
+        console.warn("Failed to refresh user profile", err);
       }
       throw err;
     }

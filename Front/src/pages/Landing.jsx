@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -7,13 +7,13 @@ import {
   ShieldCheck,
   Star,
   Globe2,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { fetchOverviewStats } from '../services/statsService';
-import { formatCurrency, formatPercent } from '../utils/formatters';
-import { resolveRiskLabel, resolveTenorMonths } from '../utils/dealMeta';
-import Container from '../components/layout/Container';
-import useAuth from '../hooks/useAuth';
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { fetchOverviewStats } from "../services/statsService";
+import { formatCurrency, formatPercent } from "../utils/formatters";
+import { resolveRiskLabel, resolveTenorMonths } from "../utils/dealMeta";
+import Container from "../components/layout/Container";
+import useAuth from "../hooks/useAuth";
 
 const defaultStats = {
   activeDeals: 0,
@@ -27,26 +27,28 @@ const defaultStats = {
 };
 
 const parseYieldValue = (value) => {
-  if (typeof value === 'number') return value;
+  if (typeof value === "number") return value;
   if (!value) return 0;
-  return Number(String(value).replace(/[^0-9.]/g, '')) || 0;
+  return Number(String(value).replace(/[^0-9.]/g, "")) || 0;
 };
-const resolveYieldValue = (deal) => parseYieldValue(deal?.targetYield ?? deal?.yieldPct);
+const resolveYieldValue = (deal) =>
+  parseYieldValue(deal?.targetYield ?? deal?.yieldPct);
 
 const parseAmountValue = (value) => {
-  if (typeof value === 'number') return value;
+  if (typeof value === "number") return value;
   if (!value) return 0;
-  return Number(String(value).replace(/[^0-9.]/g, '')) || 0;
+  return Number(String(value).replace(/[^0-9.]/g, "")) || 0;
 };
 
-const getLocationLabel = (deal) => deal.location || deal.country || 'Location pending';
-const DEFAULT_RISK_LABEL = 'On track';
-const DEALS_ROUTE = '/deals';
+const getLocationLabel = (deal) =>
+  deal.location || deal.country || "Location pending";
+const DEFAULT_RISK_LABEL = "On track";
+const DEALS_ROUTE = "/deals";
 
 export default function Landing() {
   const [stats, setStats] = useState(defaultStats);
   const [featuredDeals, setFeaturedDeals] = useState([]);
-  const [statsError, setStatsError] = useState('');
+  const [statsError, setStatsError] = useState("");
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -60,17 +62,21 @@ export default function Landing() {
             liveVolume: data.liveVolume ?? defaultStats.liveVolume,
             breakdown: data.breakdown || defaultStats.breakdown,
           });
-          setFeaturedDeals(Array.isArray(data.featuredDeals) ? data.featuredDeals : []);
+          setFeaturedDeals(
+            Array.isArray(data.featuredDeals) ? data.featuredDeals : []
+          );
         }
       } catch {
-        setStatsError('Showing sample metrics while live data loads.');
+        setStatsError("Showing sample metrics while live data loads.");
       }
     };
     load();
   }, []);
 
   const baseBreakdown = stats.breakdown || defaultStats.breakdown;
-  const featuredList = [...featuredDeals].sort((a, b) => resolveYieldValue(b) - resolveYieldValue(a));
+  const featuredList = [...featuredDeals].sort(
+    (a, b) => resolveYieldValue(b) - resolveYieldValue(a)
+  );
   const displayStats = (() => {
     const base = {
       activeDeals: stats.activeDeals ?? 0,
@@ -79,11 +85,21 @@ export default function Landing() {
       breakdown: baseBreakdown,
     };
     if (base.activeDeals === 0 && featuredList.length > 0) {
-      const activeOnly = featuredList.filter((d) => (d.status || '').toLowerCase() === 'active');
+      const activeOnly = featuredList.filter(
+        (d) => (d.status || "").toLowerCase() === "active"
+      );
       const source = activeOnly.length > 0 ? activeOnly : featuredList;
-      const totalUtilized = source.reduce((sum, d) => sum + parseAmountValue(d.utilizedAmount ?? 0), 0);
-      const yieldValues = source.map(resolveYieldValue).filter((v) => Number.isFinite(v) && v > 0);
-      const avgYield = yieldValues.length > 0 ? yieldValues.reduce((a, b) => a + b, 0) / yieldValues.length : base.averageYield;
+      const totalUtilized = source.reduce(
+        (sum, d) => sum + parseAmountValue(d.utilizedAmount ?? 0),
+        0
+      );
+      const yieldValues = source
+        .map(resolveYieldValue)
+        .filter((v) => Number.isFinite(v) && v > 0);
+      const avgYield =
+        yieldValues.length > 0
+          ? yieldValues.reduce((a, b) => a + b, 0) / yieldValues.length
+          : base.averageYield;
       return {
         ...base,
         activeDeals: base.activeDeals || source.length,
@@ -103,30 +119,38 @@ export default function Landing() {
           <div className="mt-10 space-y-6">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#0EA5E9] ring-1 ring-[#E5E7EB]">
-              Trusted MSME capital marketplace
-            </div>
+                Trusted MSME capital marketplace
+              </div>
               <h1 className="text-4xl font-semibold leading-tight text-[#0F172A] sm:text-5xl">
                 Invest in vetted MSME deals with bank-grade controls.
               </h1>
               <p className="text-lg text-[#4B5563]">
-                Discover diversified working-capital, inventory, and PO finance opportunities— with real-time risk,
-                payouts, and compliance baked in.
+                Discover diversified working-capital, inventory, and PO finance
+                opportunities— with real-time risk, payouts, and compliance
+                baked in.
               </p>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 gap-4 text-sm text-[#4B5563]">
-               {[
-                 { value: displayStats.activeDeals ?? 0, label: 'Active deals' },
-                 { value: formatPercent(displayStats.averageYield || 0, 1), label: 'Avg. yield' },
-               ].map((s) => (
+              {[
+                { value: displayStats.activeDeals ?? 0, label: "Active deals" },
+                {
+                  value: formatPercent(displayStats.averageYield || 0, 1),
+                  label: "Avg. yield",
+                },
+              ].map((s) => (
                 <div key={s.label}>
-                  <p className="text-2xl font-semibold text-[#0F172A]">{s.value}</p>
+                  <p className="text-2xl font-semibold text-[#0F172A]">
+                    {s.value}
+                  </p>
                   <p>{s.label}</p>
                 </div>
               ))}
             </div>
-            {statsError && <p className="text-xs text-[#9CA3AF]">{statsError}</p>}
+            {statsError && (
+              <p className="text-xs text-[#9CA3AF]">{statsError}</p>
+            )}
           </div>
 
           <div className="relative">
@@ -136,8 +160,10 @@ export default function Landing() {
             <div className="relative space-y-4 rounded-3xl border border-[#E5E7EB] bg-white p-6 mt-7 shadow-2xl shadow-[#E0E7FF]">
               <div className="flex items-center justify-between">
                 <div>
-                   <p className="text-sm text-[#4B5563]">Live volume</p>
-                   <p className="text-3xl font-semibold text-[#0F172A]">{formatCurrency(displayStats.liveVolume || 0)}</p>
+                  <p className="text-sm text-[#4B5563]">Live volume</p>
+                  <p className="text-3xl font-semibold text-[#0F172A]">
+                    {formatCurrency(displayStats.liveVolume || 0)}
+                  </p>
                 </div>
                 <div className="rounded-full bg-[#E6F0FF] px-3 py-1 text-xs font-semibold text-[#1F6FEB] inline-flex items-center gap-2">
                   <LineChart size={16} />
@@ -147,22 +173,31 @@ export default function Landing() {
 
               <div className="grid gap-3 sm:grid-cols-3 text-xs text-[#4B5563]">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAFC] p-4">
-                  <p className="text-sm font-semibold text-[#0F172A]">{formatCurrency(breakdown.cardVolume || 0)}</p>
+                  <p className="text-sm font-semibold text-[#0F172A]">
+                    {formatCurrency(breakdown.cardVolume || 0)}
+                  </p>
                   <p>Card payments</p>
                 </div>
                 <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAFC] p-4">
-                  <p className="text-sm font-semibold text-[#0F172A]">{formatCurrency(breakdown.bankVolume || 0)}</p>
+                  <p className="text-sm font-semibold text-[#0F172A]">
+                    {formatCurrency(breakdown.bankVolume || 0)}
+                  </p>
                   <p>Bank transfers</p>
                 </div>
                 <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAFC] p-4">
-                  <p className="text-sm font-semibold text-[#0F172A]">{formatCurrency(breakdown.payoutVolume || 0)}</p>
+                  <p className="text-sm font-semibold text-[#0F172A]">
+                    {formatCurrency(breakdown.payoutVolume || 0)}
+                  </p>
                   <p>Payouts</p>
                 </div>
               </div>
 
               <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAFC] p-4 text-sm text-[#4B5563]">
-                “We deployed and monitored diversified MSME capital in days, not months— with compliance built-in.”
-                <p className="mt-3 text-xs text-[#0F172A] font-semibold">Maya Chen · VP Product</p>
+                “We deployed and monitored diversified MSME capital in days, not
+                months— with compliance built-in.”
+                <p className="mt-3 text-xs text-[#0F172A] font-semibold">
+                  Maya Chen · VP Product
+                </p>
               </div>
             </div>
           </div>
@@ -172,11 +207,20 @@ export default function Landing() {
         <section id="market" className="mt-16 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Marketplace</p>
-              <h2 className="text-2xl font-semibold text-[#0F172A]">Featured MSME opportunities</h2>
-              <p className="text-sm text-[#4B5563]">Curated, risk-screened deals with live utilization.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                Marketplace
+              </p>
+              <h2 className="text-2xl font-semibold text-[#0F172A]">
+                Featured MSME opportunities
+              </h2>
+              <p className="text-sm text-[#4B5563]">
+                Curated, risk-screened deals with live utilization.
+              </p>
             </div>
-            <Link className="hidden items-center gap-2 text-sm font-semibold text-[#1F6FEB] hover:underline md:inline-flex" to="/deals">
+            <Link
+              className="hidden items-center gap-2 text-sm font-semibold text-[#1F6FEB] hover:underline md:inline-flex"
+              to="/deals"
+            >
               View all deals
               <ArrowRight size={16} />
             </Link>
@@ -185,35 +229,51 @@ export default function Landing() {
           <div className="grid gap-4 md:grid-cols-3">
             {featuredList.length === 0 && (
               <div className="col-span-full rounded-2xl border border-dashed border-[#E5E7EB] bg-[#F8FAFC] p-6 text-sm text-[#4B5563] shadow-sm shadow-[#E0E7FF]">
-                No live deals yet. Deals will appear here once they are published.
+                No live deals yet. Deals will appear here once they are
+                published.
               </div>
             )}
             {featuredList.map((deal) => {
               const utilizedValue = parseAmountValue(deal.utilizedAmount ?? 0);
               const amountDisplay = formatCurrency(utilizedValue);
               const yieldDisplay = formatPercent(resolveYieldValue(deal), 1);
-              const dealTag = deal.tag || deal.sector || 'MSME';
+              const dealTag = deal.tag || deal.sector || "MSME";
               const tenorDisplay = `${resolveTenorMonths(deal)} months`;
               const dealHref = deal._id ? `/deals/${deal._id}` : DEALS_ROUTE;
               const locationLabel = getLocationLabel(deal);
 
               return (
-                <div key={deal.name} className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-md shadow-[#E0E7FF]">
+                <div
+                  key={deal.name}
+                  className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-md shadow-[#E0E7FF]"
+                >
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-[#1F6FEB]">{deal.status || 'Pipeline'}</p>
-                      <h3 className="text-lg font-semibold text-[#0F172A]">{deal.name}</h3>
+                      <p className="text-xs font-semibold text-[#1F6FEB]">
+                        {deal.status || "Pipeline"}
+                      </p>
+                      <h3 className="text-lg font-semibold text-[#0F172A]">
+                        {deal.name}
+                      </h3>
                       <p className="text-xs text-[#4B5563]">{dealTag}</p>
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
                     <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Utilized Amount</p>
-                      <p className="mt-1 text-lg font-semibold text-[#0F172A]">{amountDisplay}</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+                        Utilized Amount
+                      </p>
+                      <p className="mt-1 text-lg font-semibold text-[#0F172A]">
+                        {amountDisplay}
+                      </p>
                     </div>
                     <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Target APY</p>
-                      <p className="mt-1 text-lg font-semibold text-[#0F172A]">{yieldDisplay}</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+                        Target APY
+                      </p>
+                      <p className="mt-1 text-lg font-semibold text-[#0F172A]">
+                        {yieldDisplay}
+                      </p>
                     </div>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#4B5563]">
@@ -249,8 +309,12 @@ export default function Landing() {
           <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF] lg:col-span-2">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Trust</p>
-                <h2 className="text-xl font-semibold text-[#0F172A]">Security & compliance</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Trust
+                </p>
+                <h2 className="text-xl font-semibold text-[#0F172A]">
+                  Security & compliance
+                </h2>
               </div>
               <ShieldCheck className="text-[#10B981]" size={20} />
             </div>
@@ -275,18 +339,29 @@ export default function Landing() {
           </div>
 
           <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Ratings</p>
-            <h3 className="text-lg font-semibold text-[#0F172A]">Investors love the ops</h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+              Ratings
+            </p>
+            <h3 className="text-lg font-semibold text-[#0F172A]">
+              Investors love the ops
+            </h3>
             <div className="mt-4 flex items-center gap-2">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} className="fill-[#F59E0B] text-[#F59E0B]" />
+                <Star
+                  key={i}
+                  size={18}
+                  className="fill-[#F59E0B] text-[#F59E0B]"
+                />
               ))}
               <span className="text-sm text-[#4B5563]">4.9/5</span>
             </div>
             <p className="mt-3 text-sm text-[#4B5563]">
-              “Fast diligence, clear guardrails, and transparent cashflow data. Feels like a pro marketplace for MSME capital.”
+              “Fast diligence, clear guardrails, and transparent cashflow data.
+              Feels like a pro marketplace for MSME capital.”
             </p>
-            <p className="mt-2 text-xs font-semibold text-[#0F172A]">A. Raman · Investor</p>
+            <p className="mt-2 text-xs font-semibold text-[#0F172A]">
+              A. Raman · Investor
+            </p>
           </div>
         </section>
 
@@ -298,9 +373,12 @@ export default function Landing() {
           >
             <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-white px-8 py-10 lg:flex-row lg:items-center">
               <div>
-                <h3 className="text-2xl font-semibold text-[#0F172A]">Start deploying capital with full visibility.</h3>
+                <h3 className="text-2xl font-semibold text-[#0F172A]">
+                  Start deploying capital with full visibility.
+                </h3>
                 <p className="mt-2 max-w-2xl text-[#4B5563]">
-                  Join investors funding vetted MSMEs with real-time risk controls and transparent cashflows.
+                  Join investors funding vetted MSMEs with real-time risk
+                  controls and transparent cashflows.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3">

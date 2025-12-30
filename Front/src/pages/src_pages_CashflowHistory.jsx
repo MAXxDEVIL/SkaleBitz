@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Calendar, LineChart, Sparkles } from 'lucide-react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { fetchDealCashflows } from '../services/dealService';
-import { formatCurrency, formatDateShort } from '../utils/formatters';
-import Container from '../components/layout/Container';
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, Calendar, LineChart, Sparkles } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { fetchDealCashflows } from "../services/dealService";
+import { formatCurrency, formatDateShort } from "../utils/formatters";
+import Container from "../components/layout/Container";
 
 export default function CashflowHistory() {
   const { dealId } = useParams();
@@ -13,14 +13,14 @@ export default function CashflowHistory() {
   const [deal, setDeal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [csvNotice, setCsvNotice] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const load = async () => {
-      setError('');
+      setError("");
       setLoading(true);
       if (!dealId) {
-        setError('No deal selected.');
+        setError("No deal selected.");
         setLoading(false);
         return;
       }
@@ -34,9 +34,9 @@ export default function CashflowHistory() {
         });
       } catch (err) {
         if (import.meta.env.DEV) {
-          console.error('Failed to load cashflows', err);
+          console.error("Failed to load cashflows", err);
         }
-        setError('Unable to load cashflow history right now.');
+        setError("Unable to load cashflow history right now.");
         setPayouts([]);
         setTotals({ principal: 0, yield: 0 });
       } finally {
@@ -54,8 +54,8 @@ export default function CashflowHistory() {
     [totals.principal, totals.yield]
   );
 
-  const backHref = dealId ? `/deals/${dealId}` : '/deals';
-  const dealName = deal?.name || 'Deal';
+  const backHref = dealId ? `/deals/${dealId}` : "/deals";
+  const dealName = deal?.name || "Deal";
 
   return (
     <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
@@ -80,7 +80,8 @@ export default function CashflowHistory() {
         <header className="space-y-1">
           <h1 className="text-3xl font-semibold text-[#0F172A]">Cashflows</h1>
           <p className="text-sm text-[#4B5563]">
-            Principal and yield calculated from repayment transactions for this deal.
+            Principal and yield calculated from repayment transactions for this
+            deal.
           </p>
         </header>
 
@@ -93,7 +94,9 @@ export default function CashflowHistory() {
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">History</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                History
+              </p>
               <h2 className="text-xl font-semibold text-[#0F172A]">Payouts</h2>
             </div>
             <LineChart className="text-[#1F6FEB]" size={20} />
@@ -101,27 +104,48 @@ export default function CashflowHistory() {
 
           <div className="mt-4 grid gap-3 sm:grid-cols-3 text-sm">
             <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Total principal</p>
-              <p className="mt-2 text-lg font-semibold text-[#0F172A]">{formattedTotals.principal}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+                Total principal
+              </p>
+              <p className="mt-2 text-lg font-semibold text-[#0F172A]">
+                {formattedTotals.principal}
+              </p>
             </div>
             <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Total yield</p>
-              <p className="mt-2 text-lg font-semibold text-[#0F172A]">{formattedTotals.yield}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+                Total yield
+              </p>
+              <p className="mt-2 text-lg font-semibold text-[#0F172A]">
+                {formattedTotals.yield}
+              </p>
             </div>
             <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Payout count</p>
-              <p className="mt-2 text-lg font-semibold text-[#0F172A]">{payouts.length}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+                Payout count
+              </p>
+              <p className="mt-2 text-lg font-semibold text-[#0F172A]">
+                {payouts.length}
+              </p>
             </div>
           </div>
 
           <div className="mt-4 divide-y divide-[#E5E7EB]">
-            {loading && <div className="py-3 text-sm text-[#4B5563]">Loading cashflows...</div>}
+            {loading && (
+              <div className="py-3 text-sm text-[#4B5563]">
+                Loading cashflows...
+              </div>
+            )}
             {!loading && payouts.length === 0 && (
-              <div className="py-3 text-sm text-[#4B5563]">No repayment transactions recorded yet.</div>
+              <div className="py-3 text-sm text-[#4B5563]">
+                No repayment transactions recorded yet.
+              </div>
             )}
             {!loading &&
               payouts.map((f) => (
-                <div key={f.id || f.cycle} className="grid grid-cols-5 items-center py-3 text-sm">
+                <div
+                  key={f.id || f.cycle}
+                  className="grid grid-cols-5 items-center py-3 text-sm"
+                >
                   <div className="col-span-2">
                     <p className="font-semibold text-[#0F172A]">{f.cycle}</p>
                     <p className="text-xs text-[#4B5563] inline-flex items-center gap-1">
@@ -129,12 +153,20 @@ export default function CashflowHistory() {
                       {formatDateShort(f.date)}
                     </p>
                   </div>
-                  <p className="text-[#0F172A]">{formatCurrency(f.principal || 0)}</p>
-                  <p className="text-[#0F172A]">{formatCurrency(f.yield || 0)}</p>
+                  <p className="text-[#0F172A]">
+                    {formatCurrency(f.principal || 0)}
+                  </p>
+                  <p className="text-[#0F172A]">
+                    {formatCurrency(f.yield || 0)}
+                  </p>
                   <p
-                    className={`text-xs font-semibold ${f.status === 'Settled' ? 'text-[#10B981]' : 'text-[#1F6FEB]'}`}
+                    className={`text-xs font-semibold ${
+                      f.status === "Settled"
+                        ? "text-[#10B981]"
+                        : "text-[#1F6FEB]"
+                    }`}
                   >
-                    {f.status || 'Settled'}
+                    {f.status || "Settled"}
                   </p>
                 </div>
               ))}
@@ -149,7 +181,9 @@ export default function CashflowHistory() {
               Export CSV
             </button>
             {csvNotice && (
-              <p className="text-xs font-semibold text-[#1F2937]">No CSV available</p>
+              <p className="text-xs font-semibold text-[#1F2937]">
+                No CSV available
+              </p>
             )}
           </div>
         </div>

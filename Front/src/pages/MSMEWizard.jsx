@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,88 +15,113 @@ import {
   Phone,
   Mail,
   Calendar,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import { submitMsmeDeal } from '../services/dealService';
-import Container from '../components/layout/Container';
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import { submitMsmeDeal } from "../services/dealService";
+import Container from "../components/layout/Container";
 
 const steps = [
-  { id: 1, title: 'Business profile' },
-  { id: 2, title: 'Financial info' },
-  { id: 3, title: 'Documents' },
-  { id: 4, title: 'Review & submit' },
+  { id: 1, title: "Business profile" },
+  { id: 2, title: "Financial info" },
+  { id: 3, title: "Documents" },
+  { id: 4, title: "Review & submit" },
 ];
 
 const FINANCIAL_FIELDS = [
-  'revenue',
-  'expenses',
-  'burn_rate',
-  'cash',
-  'customers',
-  'churn_rate',
-  'acquisition_cost',
-  'lifetime_value',
+  "revenue",
+  "expenses",
+  "burn_rate",
+  "cash",
+  "customers",
+  "churn_rate",
+  "acquisition_cost",
+  "lifetime_value",
 ];
 
 const FINANCIAL_FIELD_LABELS = {
-  revenue: 'revenue',
-  expenses: 'expenses',
-  burn_rate: 'burn rate',
-  cash: 'cash',
-  customers: 'customers',
-  churn_rate: 'churn rate',
-  acquisition_cost: 'acquisition cost',
-  lifetime_value: 'lifetime value',
+  revenue: "revenue",
+  expenses: "expenses",
+  burn_rate: "burn rate",
+  cash: "cash",
+  customers: "customers",
+  churn_rate: "churn rate",
+  acquisition_cost: "acquisition cost",
+  lifetime_value: "lifetime value",
 };
 
 export default function MSMEWizard() {
   const [activeStep, setActiveStep] = useState(1);
   const { user, updateUser, refreshUser } = useAuth();
   const [form, setForm] = useState({
-    businessName: '',
-    registeredAddress: '',
-    contactName: '',
-    contactEmail: user?.email || '',
-    contactPhone: '',
-    website: 'https://',
-    country: '',
-    repaymentCadence: 'Monthly',
-    targetYield: '',
-    tenorMonths: '',
-    facilitySize: '',
-    revenue: '',
-    expenses: '',
-    burn_rate: '',
-    cash: '',
-    customers: '',
-    churn_rate: '',
-    acquisition_cost: '',
-    lifetime_value: '',
-    doc1: '',
-    doc2: '',
-    doc3DirectorId: '',
-    doc3AddressProof: '',
+    businessName: "",
+    registeredAddress: "",
+    contactName: "",
+    contactEmail: user?.email || "",
+    contactPhone: "",
+    website: "https://",
+    country: "",
+    repaymentCadence: "Monthly",
+    targetYield: "",
+    tenorMonths: "",
+    facilitySize: "",
+    revenue: "",
+    expenses: "",
+    burn_rate: "",
+    cash: "",
+    customers: "",
+    churn_rate: "",
+    acquisition_cost: "",
+    lifetime_value: "",
+    doc1: "",
+    doc2: "",
+    doc3DirectorId: "",
+    doc3AddressProof: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
+  const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [hasExistingDeal, setHasExistingDeal] = useState(Boolean(user?.dealId));
   const docFields = [
-    { label: 'Certificate of incorporation', field: 'doc1', placeholder: 'Upload reference or URL (doc1)', saveAs: 'doc1' },
-    { label: 'Latest bank statements', field: 'doc2', placeholder: 'Upload reference or URL (doc2)', saveAs: 'doc2' },
-    { label: 'Director ID (front/back)', field: 'doc3DirectorId', placeholder: 'Upload reference or URL (doc3)', saveAs: 'doc3 (director ID)' },
-    { label: 'Address proof', field: 'doc3AddressProof', placeholder: 'Upload reference or URL (doc3)', saveAs: 'doc3 (address proof)' },
+    {
+      label: "Certificate of incorporation",
+      field: "doc1",
+      placeholder: "Upload reference or URL (doc1)",
+      saveAs: "doc1",
+    },
+    {
+      label: "Latest bank statements",
+      field: "doc2",
+      placeholder: "Upload reference or URL (doc2)",
+      saveAs: "doc2",
+    },
+    {
+      label: "Director ID (front/back)",
+      field: "doc3DirectorId",
+      placeholder: "Upload reference or URL (doc3)",
+      saveAs: "doc3 (director ID)",
+    },
+    {
+      label: "Address proof",
+      field: "doc3AddressProof",
+      placeholder: "Upload reference or URL (doc3)",
+      saveAs: "doc3 (address proof)",
+    },
   ];
   const docSummary =
     [
-      form.doc1 && 'Incorporation',
-      form.doc2 && 'Bank statements',
-      form.doc3DirectorId && 'Director ID',
-      form.doc3AddressProof && 'Address proof',
-    ].filter(Boolean).join(', ') || 'Docs pending';
-  const locationSummary = form.country || form.registeredAddress || 'Not provided';
-  const contactSummary = [form.contactName, form.contactEmail].filter(Boolean).join(' · ');
+      form.doc1 && "Incorporation",
+      form.doc2 && "Bank statements",
+      form.doc3DirectorId && "Director ID",
+      form.doc3AddressProof && "Address proof",
+    ]
+      .filter(Boolean)
+      .join(", ") || "Docs pending";
+  const locationSummary =
+    form.country || form.registeredAddress || "Not provided";
+  const contactSummary = [form.contactName, form.contactEmail]
+    .filter(Boolean)
+    .join(" · ");
 
   useEffect(() => {
     setHasExistingDeal(Boolean(user?.dealId));
@@ -108,7 +133,7 @@ export default function MSMEWizard() {
   const isStep2Valid = () => {
     return FINANCIAL_FIELDS.every((field) => {
       const value = Number(form[field]);
-      return form[field] !== '' && Number.isFinite(value) && value >= 0;
+      return form[field] !== "" && Number.isFinite(value) && value >= 0;
     });
   };
 
@@ -117,7 +142,7 @@ export default function MSMEWizard() {
   const updateField = (field) => (e) => {
     const value = e.target.value;
     setSubmitSuccess(false);
-    setSubmitError('');
+    setSubmitError("");
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -125,7 +150,9 @@ export default function MSMEWizard() {
     if (submitting) return;
     if (hasExistingDeal) {
       setSubmitSuccess(false);
-      setSubmitError('You already listed a deal. Please manage it from your dashboard.');
+      setSubmitError(
+        "You already listed a deal. Please manage it from your dashboard."
+      );
       return;
     }
     const yieldValue = Number(form.targetYield);
@@ -133,17 +160,17 @@ export default function MSMEWizard() {
     const facilityValue = Number(form.facilitySize);
     if (!Number.isFinite(yieldValue) || yieldValue <= 0) {
       setSubmitSuccess(false);
-      setSubmitError('Please enter your target yield (percentage).');
+      setSubmitError("Please enter your target yield (percentage).");
       return;
     }
     if (!Number.isFinite(tenorValue) || tenorValue <= 0) {
       setSubmitSuccess(false);
-      setSubmitError('Please enter tenor in months (positive number).');
+      setSubmitError("Please enter tenor in months (positive number).");
       return;
     }
     if (!Number.isFinite(facilityValue) || facilityValue <= 0) {
       setSubmitSuccess(false);
-      setSubmitError('Please enter your facility size.');
+      setSubmitError("Please enter your facility size.");
       return;
     }
     // Validate financial fields
@@ -154,11 +181,13 @@ export default function MSMEWizard() {
     for (const [fieldName, value] of Object.entries(financialFields)) {
       if (!Number.isFinite(value) || value < 0) {
         setSubmitSuccess(false);
-        setSubmitError(`Please enter a valid ${FINANCIAL_FIELD_LABELS[fieldName]} (must be ≥ 0).`);
+        setSubmitError(
+          `Please enter a valid ${FINANCIAL_FIELD_LABELS[fieldName]} (must be ≥ 0).`
+        );
         return;
       }
     }
-    setSubmitError('');
+    setSubmitError("");
     setSubmitting(true);
     try {
       const createdDeal = await submitMsmeDeal({
@@ -186,17 +215,22 @@ export default function MSMEWizard() {
           await refreshUser();
         } catch (refreshErr) {
           updateUser({ ...user, dealId: createdDeal._id });
-          setSubmitError('Deal created, but we could not refresh your profile. Please reload this page or open your dashboard to refresh.');
+          setSubmitError(
+            "Deal created, but we could not refresh your profile. Please reload this page or open your dashboard to refresh."
+          );
           if (import.meta.env.DEV) {
-            console.warn('Failed to refresh user after submitting deal', refreshErr);
+            console.warn(
+              "Failed to refresh user after submitting deal",
+              refreshErr
+            );
           }
         }
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error('Submit for review failed', error);
+        console.error("Submit for review failed", error);
       }
-      setSubmitError('Unable to submit right now. Please try again.');
+      setSubmitError("Unable to submit right now. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -230,8 +264,11 @@ export default function MSMEWizard() {
 
         {hasExistingDeal && (
           <div className="rounded-2xl border border-[#A7F3D0] bg-[#ECFDF3] p-4 text-sm text-[#065F46] shadow-sm shadow-[#D1FAE5]">
-            You already submitted a deal for review. You can view it from your{' '}
-            <Link to="/msme/dashboard" className="font-semibold text-[#0F172A] underline">
+            You already submitted a deal for review. You can view it from your{" "}
+            <Link
+              to="/msme/dashboard"
+              className="font-semibold text-[#0F172A] underline"
+            >
               dashboard
             </Link>
             .
@@ -249,24 +286,28 @@ export default function MSMEWizard() {
                   key={step.id}
                   className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${
                     current
-                      ? 'border-[#1F6FEB] bg-[#E6F0FF]'
-                      : 'border-[#E5E7EB] bg-[#F8FAFC]'
+                      ? "border-[#1F6FEB] bg-[#E6F0FF]"
+                      : "border-[#E5E7EB] bg-[#F8FAFC]"
                   }`}
                 >
                   <div
                     className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold ${
                       done
-                        ? 'bg-[#10B981] text-white'
+                        ? "bg-[#10B981] text-white"
                         : current
-                        ? 'bg-white text-[#1F6FEB] border border-[#1F6FEB]'
-                        : 'bg-white text-[#4B5563] border border-[#E5E7EB]'
+                        ? "bg-white text-[#1F6FEB] border border-[#1F6FEB]"
+                        : "bg-white text-[#4B5563] border border-[#E5E7EB]"
                     }`}
                   >
                     {done ? <CheckCircle2 size={18} /> : step.id}
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-[#0EA5E9]">Step {step.id}</p>
-                    <p className="text-sm font-semibold text-[#0F172A]">{step.title}</p>
+                    <p className="text-xs font-semibold text-[#0EA5E9]">
+                      Step {step.id}
+                    </p>
+                    <p className="text-sm font-semibold text-[#0F172A]">
+                      {step.title}
+                    </p>
                   </div>
                 </div>
               );
@@ -279,8 +320,12 @@ export default function MSMEWizard() {
           {activeStep === 1 && (
             <div className="space-y-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Profile</p>
-                <h2 className="text-2xl font-semibold text-[#0F172A]">Business profile</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Profile
+                </p>
+                <h2 className="text-2xl font-semibold text-[#0F172A]">
+                  Business profile
+                </h2>
                 <p className="text-sm text-[#4B5563] mt-1">
                   Provide basic business details for KYB and underwriting.
                 </p>
@@ -288,111 +333,127 @@ export default function MSMEWizard() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Legal business name</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Legal business name
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Building2 size={18} className="text-[#1F6FEB]" />
                     <input
                       type="text"
                       placeholder="BrightMart Supplies Pte Ltd"
                       value={form.businessName}
-                      onChange={updateField('businessName')}
+                      onChange={updateField("businessName")}
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
                   </div>
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Registered address</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Registered address
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <MapPin size={18} className="text-[#1F6FEB]" />
                     <input
                       type="text"
                       placeholder="123 Orchard Rd, Singapore"
                       value={form.registeredAddress}
-                      onChange={updateField('registeredAddress')}
+                      onChange={updateField("registeredAddress")}
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
                   </div>
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Contact person</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Contact person
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <User size={18} className="text-[#1F6FEB]" />
                     <input
                       type="text"
                       placeholder="Alex Tan"
                       value={form.contactName}
-                      onChange={updateField('contactName')}
+                      onChange={updateField("contactName")}
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
                   </div>
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Work email</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Work email
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Mail size={18} className="text-[#1F6FEB]" />
                     <input
                       type="email"
                       placeholder="ops@brightmart.com"
                       value={form.contactEmail}
-                      onChange={updateField('contactEmail')}
+                      onChange={updateField("contactEmail")}
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
                   </div>
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Phone</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Phone
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Phone size={18} className="text-[#1F6FEB]" />
                     <input
                       type="tel"
                       placeholder="+65 5555 1234"
                       value={form.contactPhone}
-                      onChange={updateField('contactPhone')}
+                      onChange={updateField("contactPhone")}
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
                   </div>
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Website</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Website
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Globe2 size={18} className="text-[#1F6FEB]" />
                     <input
                       type="url"
                       placeholder="https://brightmart.com"
                       value={form.website}
-                      onChange={updateField('website')}
+                      onChange={updateField("website")}
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
                   </div>
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Country</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Country
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Globe2 size={18} className="text-[#1F6FEB]" />
                     <input
                       type="text"
                       placeholder="Singapore"
                       value={form.country}
-                      onChange={updateField('country')}
+                      onChange={updateField("country")}
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
                   </div>
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Repayment cadence</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Repayment cadence
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Calendar size={18} className="text-[#1F6FEB]" />
                     <select
                       className="w-full bg-transparent text-sm text-[#111827] focus:outline-none"
                       value={form.repaymentCadence}
-                      onChange={updateField('repaymentCadence')}
+                      onChange={updateField("repaymentCadence")}
                     >
                       <option>Monthly</option>
                       <option>Quarterly</option>
@@ -403,7 +464,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Target yield (%)</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Target yield (%)
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <LineChart size={18} className="text-[#1F6FEB]" />
                     <input
@@ -412,7 +475,7 @@ export default function MSMEWizard() {
                       step="0.1"
                       placeholder="12.0"
                       value={form.targetYield}
-                      onChange={updateField('targetYield')}
+                      onChange={updateField("targetYield")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -420,7 +483,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Tenor (months)</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Tenor (months)
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Calendar size={18} className="text-[#1F6FEB]" />
                     <input
@@ -429,7 +494,7 @@ export default function MSMEWizard() {
                       step="1"
                       placeholder="6"
                       value={form.tenorMonths}
-                      onChange={updateField('tenorMonths')}
+                      onChange={updateField("tenorMonths")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -437,7 +502,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Facility size</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Facility size
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Banknote size={18} className="text-[#1F6FEB]" />
                     <input
@@ -446,7 +513,7 @@ export default function MSMEWizard() {
                       step="1000"
                       placeholder="10000"
                       value={form.facilitySize}
-                      onChange={updateField('facilitySize')}
+                      onChange={updateField("facilitySize")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -459,8 +526,12 @@ export default function MSMEWizard() {
           {activeStep === 2 && (
             <div className="space-y-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Financials</p>
-                <h2 className="text-2xl font-semibold text-[#0F172A]">Financial info</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Financials
+                </p>
+                <h2 className="text-2xl font-semibold text-[#0F172A]">
+                  Financial info
+                </h2>
                 <p className="text-sm text-[#4B5563] mt-1">
                   Provide key financial metrics for underwriting assessment.
                 </p>
@@ -468,7 +539,9 @@ export default function MSMEWizard() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Revenue *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Revenue *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Banknote size={18} className="text-[#1F6FEB]" />
                     <input
@@ -477,7 +550,7 @@ export default function MSMEWizard() {
                       step="0.01"
                       placeholder="50000"
                       value={form.revenue}
-                      onChange={updateField('revenue')}
+                      onChange={updateField("revenue")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -485,7 +558,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Expenses *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Expenses *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Banknote size={18} className="text-[#1F6FEB]" />
                     <input
@@ -494,7 +569,7 @@ export default function MSMEWizard() {
                       step="0.01"
                       placeholder="30000"
                       value={form.expenses}
-                      onChange={updateField('expenses')}
+                      onChange={updateField("expenses")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -502,7 +577,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Burn rate *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Burn rate *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <LineChart size={18} className="text-[#1F6FEB]" />
                     <input
@@ -511,7 +588,7 @@ export default function MSMEWizard() {
                       step="0.01"
                       placeholder="5000"
                       value={form.burn_rate}
-                      onChange={updateField('burn_rate')}
+                      onChange={updateField("burn_rate")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -519,7 +596,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Cash *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Cash *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Banknote size={18} className="text-[#1F6FEB]" />
                     <input
@@ -528,7 +607,7 @@ export default function MSMEWizard() {
                       step="0.01"
                       placeholder="20000"
                       value={form.cash}
-                      onChange={updateField('cash')}
+                      onChange={updateField("cash")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -536,7 +615,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Customers *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Customers *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <User size={18} className="text-[#1F6FEB]" />
                     <input
@@ -545,7 +626,7 @@ export default function MSMEWizard() {
                       step="1"
                       placeholder="100"
                       value={form.customers}
-                      onChange={updateField('customers')}
+                      onChange={updateField("customers")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -553,7 +634,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Churn rate *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Churn rate *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <LineChart size={18} className="text-[#1F6FEB]" />
                     <input
@@ -562,7 +645,7 @@ export default function MSMEWizard() {
                       step="0.01"
                       placeholder="5.5"
                       value={form.churn_rate}
-                      onChange={updateField('churn_rate')}
+                      onChange={updateField("churn_rate")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -570,7 +653,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Acquisition cost *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Acquisition cost *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Banknote size={18} className="text-[#1F6FEB]" />
                     <input
@@ -579,7 +664,7 @@ export default function MSMEWizard() {
                       step="0.01"
                       placeholder="200"
                       value={form.acquisition_cost}
-                      onChange={updateField('acquisition_cost')}
+                      onChange={updateField("acquisition_cost")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -587,7 +672,9 @@ export default function MSMEWizard() {
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-[#0F172A]">Lifetime value *</span>
+                  <span className="text-sm font-medium text-[#0F172A]">
+                    Lifetime value *
+                  </span>
                   <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1F6FEB] focus-within:ring-2 focus-within:ring-[#1F6FEB33]">
                     <Banknote size={18} className="text-[#1F6FEB]" />
                     <input
@@ -596,7 +683,7 @@ export default function MSMEWizard() {
                       step="0.01"
                       placeholder="1000"
                       value={form.lifetime_value}
-                      onChange={updateField('lifetime_value')}
+                      onChange={updateField("lifetime_value")}
                       required
                       className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                     />
@@ -611,10 +698,18 @@ export default function MSMEWizard() {
                 </div>
                 <ul className="mt-3 space-y-2 text-sm text-[#4B5563]">
                   <li>• All fields are required and must be ≥ 0.</li>
-                  <li>• Revenue & expenses: Enter monthly or annual amounts in your local currency.</li>
+                  <li>
+                    • Revenue & expenses: Enter monthly or annual amounts in
+                    your local currency.
+                  </li>
                   <li>• Burn rate: Monthly cash consumption rate.</li>
-                  <li>• Churn rate: Customer attrition percentage (e.g., 5.5 for 5.5%).</li>
-                  <li>• Acquisition cost & lifetime value: Per-customer amounts.</li>
+                  <li>
+                    • Churn rate: Customer attrition percentage (e.g., 5.5 for
+                    5.5%).
+                  </li>
+                  <li>
+                    • Acquisition cost & lifetime value: Per-customer amounts.
+                  </li>
                 </ul>
               </div>
             </div>
@@ -623,10 +718,15 @@ export default function MSMEWizard() {
           {activeStep === 3 && (
             <div className="space-y-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Documents</p>
-                <h2 className="text-2xl font-semibold text-[#0F172A]">Upload KYB & financials</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Documents
+                </p>
+                <h2 className="text-2xl font-semibold text-[#0F172A]">
+                  Upload KYB & financials
+                </h2>
                 <p className="text-sm text-[#4B5563] mt-1">
-                  Provide registration docs, IDs, and recent financial statements.
+                  Provide registration docs, IDs, and recent financial
+                  statements.
                 </p>
               </div>
 
@@ -638,8 +738,12 @@ export default function MSMEWizard() {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div>
-                        <p className="text-sm font-semibold text-[#0F172A]">{doc.label}</p>
-                        <p className="text-xs text-[#4B5563]">PDF or image, max 10MB · Save as {doc.saveAs}</p>
+                        <p className="text-sm font-semibold text-[#0F172A]">
+                          {doc.label}
+                        </p>
+                        <p className="text-xs text-[#4B5563]">
+                          PDF or image, max 10MB · Save as {doc.saveAs}
+                        </p>
                       </div>
                       <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#1F2937] border border-[#E5E7EB]">
                         {doc.saveAs}
@@ -673,30 +777,50 @@ export default function MSMEWizard() {
           {activeStep === 4 && (
             <div className="space-y-6">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">Review</p>
-                <h2 className="text-2xl font-semibold text-[#0F172A]">Confirm and submit</h2>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                  Review
+                </p>
+                <h2 className="text-2xl font-semibold text-[#0F172A]">
+                  Confirm and submit
+                </h2>
                 <p className="text-sm text-[#4B5563] mt-1">
-                  Double-check your details and documents before submitting for verification.
+                  Double-check your details and documents before submitting for
+                  verification.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAFC] p-4">
                 <p className="text-sm font-semibold text-[#0F172A]">Summary</p>
                 <ul className="mt-3 space-y-2 text-sm text-[#4B5563]">
-                  <li>• Business: {form.businessName || 'Not provided'}</li>
-                  <li>• Contact: {contactSummary || 'Not provided'}</li>
+                  <li>• Business: {form.businessName || "Not provided"}</li>
+                  <li>• Contact: {contactSummary || "Not provided"}</li>
                   <li>• Location: {locationSummary}</li>
-                  <li>• Target yield: {form.targetYield ? `${form.targetYield}%` : 'Not provided'}</li>
-                  <li>• Tenor: {form.tenorMonths ? `${form.tenorMonths} months` : 'Not provided'}</li>
-                  <li>• Facility size: {form.facilitySize || 'Not provided'}</li>
-                  <li>• Revenue: {form.revenue || 'Not provided'}</li>
-                  <li>• Expenses: {form.expenses || 'Not provided'}</li>
-                  <li>• Burn rate: {form.burn_rate || 'Not provided'}</li>
-                  <li>• Cash: {form.cash || 'Not provided'}</li>
-                  <li>• Customers: {form.customers || 'Not provided'}</li>
-                  <li>• Churn rate: {form.churn_rate || 'Not provided'}</li>
-                  <li>• Acquisition cost: {form.acquisition_cost || 'Not provided'}</li>
-                  <li>• Lifetime value: {form.lifetime_value || 'Not provided'}</li>
+                  <li>
+                    • Target yield:{" "}
+                    {form.targetYield ? `${form.targetYield}%` : "Not provided"}
+                  </li>
+                  <li>
+                    • Tenor:{" "}
+                    {form.tenorMonths
+                      ? `${form.tenorMonths} months`
+                      : "Not provided"}
+                  </li>
+                  <li>
+                    • Facility size: {form.facilitySize || "Not provided"}
+                  </li>
+                  <li>• Revenue: {form.revenue || "Not provided"}</li>
+                  <li>• Expenses: {form.expenses || "Not provided"}</li>
+                  <li>• Burn rate: {form.burn_rate || "Not provided"}</li>
+                  <li>• Cash: {form.cash || "Not provided"}</li>
+                  <li>• Customers: {form.customers || "Not provided"}</li>
+                  <li>• Churn rate: {form.churn_rate || "Not provided"}</li>
+                  <li>
+                    • Acquisition cost:{" "}
+                    {form.acquisition_cost || "Not provided"}
+                  </li>
+                  <li>
+                    • Lifetime value: {form.lifetime_value || "Not provided"}
+                  </li>
                   <li>• Docs: {docSummary}</li>
                 </ul>
               </div>
@@ -719,7 +843,8 @@ export default function MSMEWizard() {
               )}
               {submitSuccess && (
                 <div className="rounded-2xl border border-[#A7F3D0] bg-[#ECFDF3] p-3 text-sm text-[#065F46] shadow-sm shadow-[#D1FAE5]">
-                  Documents submitted and verified instantly. Your deal is now visible to investors.
+                  Documents submitted and verified instantly. Your deal is now
+                  visible to investors.
                 </div>
               )}
             </div>
@@ -754,7 +879,11 @@ export default function MSMEWizard() {
                 disabled={submitting || hasExistingDeal}
                 className="inline-flex items-center gap-2 rounded-full bg-[#0F172A] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#111827] disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {hasExistingDeal ? 'Deal already submitted' : submitting ? 'Submitting...' : 'Submit for review'}
+                {hasExistingDeal
+                  ? "Deal already submitted"
+                  : submitting
+                  ? "Submitting..."
+                  : "Submit for review"}
                 <ShieldCheck size={16} />
               </button>
             )}

@@ -1,21 +1,27 @@
-import { ArrowUpRight, Banknote, MapPin, ShieldCheck, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { getStatusMeta } from '../../utils/dealMeta';
+import {
+  ArrowUpRight,
+  Banknote,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { getStatusMeta } from "../../utils/dealMeta";
 
 export default function DealCard({
-  name = 'BrightMart Supplies',
-  sector = 'Retail ops · Working capital',
-  amount = '$120,000',
-  yieldPct = '11.8%',
-  status = 'Active',
-  location = 'Singapore',
-  tenor = '6 months',
-  risk = 'On track',
-  ctaLabel = 'View deal',
-  href = '#',
+  name = "BrightMart Supplies",
+  sector = "Retail ops · Working capital",
+  amount = "$120,000",
+  yieldPct = "11.8%",
+  status = "Active",
+  location = "Singapore",
+  tenor = "6 months",
+  risk = "On track",
+  ctaLabel = "View deal",
+  href = "#",
 }) {
   const statusMeta = getStatusMeta(status);
-  const resolvedLocation = location || 'Location pending';
+  const resolvedLocation = location || "Location pending";
 
   return (
     <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-md shadow-[#E0E7FF] hover:shadow-lg hover:shadow-[#E0E7FF]/80 transition">
@@ -40,15 +46,23 @@ export default function DealCard({
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3 text-sm">
         <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Utilized Amount</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+            Utilized Amount
+          </p>
           <p className="mt-2 text-lg font-semibold text-[#0F172A]">{amount}</p>
         </div>
         <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Target APY</p>
-          <p className="mt-2 text-lg font-semibold text-[#0F172A]">{yieldPct}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+            Target APY
+          </p>
+          <p className="mt-2 text-lg font-semibold text-[#0F172A]">
+            {yieldPct}
+          </p>
         </div>
         <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Tenor</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+            Tenor
+          </p>
           <p className="mt-2 text-lg font-semibold text-[#0F172A]">{tenor}</p>
         </div>
       </div>

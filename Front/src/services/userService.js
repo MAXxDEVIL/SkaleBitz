@@ -1,9 +1,9 @@
-import api from './api';
-import { withRequestLock } from './requestLock';
+import api from "./api";
+import { withRequestLock } from "./requestLock";
 
 export const fetchProfile = async () => {
-  return withRequestLock('users:me', async () => {
-    const { data } = await api.get('/api/users/me');
+  return withRequestLock("users:me", async () => {
+    const { data } = await api.get("/api/users/me");
     return data;
   });
 };
@@ -16,6 +16,6 @@ export const fetchUserById = async (userId) => {
 };
 
 export const updateProfile = async (payload) => {
-  const { data } = await api.put('/api/users/me', payload);
+  const { data } = await api.put("/api/users/me", payload);
   return data;
 };

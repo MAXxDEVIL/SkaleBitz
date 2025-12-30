@@ -1,11 +1,18 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, UserRound, LayoutDashboard, Settings, LogOut, User2 } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
-import useAuth from '../../hooks/useAuth';
-import Container from './Container';
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Search,
+  UserRound,
+  LayoutDashboard,
+  Settings,
+  LogOut,
+  User2,
+} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import useAuth from "../../hooks/useAuth";
+import Container from "./Container";
 
 export default function Navbar() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const { isAuthenticated, user, logout } = useAuth();
@@ -16,35 +23,38 @@ export default function Navbar() {
     const trimmed = query.trim();
     setOpen(false);
     navigate({
-      pathname: '/deals',
-      search: trimmed ? `?q=${encodeURIComponent(trimmed)}` : '',
+      pathname: "/deals",
+      search: trimmed ? `?q=${encodeURIComponent(trimmed)}` : "",
     });
   };
 
   useEffect(() => {
     const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
+      if (menuRef.current && !menuRef.current.contains(e.target))
+        setOpen(false);
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const role = user?.accountType || user?.role || 'role';
-  const roleLabel = role === 'msme' ? 'MSME' : role === 'investor' ? 'Investor' : role;
+  const role = user?.accountType || user?.role || "role";
+  const roleLabel =
+    role === "msme" ? "MSME" : role === "investor" ? "Investor" : role;
   const roleColor =
-    role === 'msme'
-      ? 'bg-[#FEF3C7] text-[#B45309]'
-      : role === 'investor'
-      ? 'bg-[#E6F0FF] text-[#1F6FEB]'
-      : 'bg-[#E6F0FF] text-[#1F6FEB]';
-  const dashboardPath = role === 'msme'
-    ? '/msme/dashboard'
-    : user?.id
+    role === "msme"
+      ? "bg-[#FEF3C7] text-[#B45309]"
+      : role === "investor"
+      ? "bg-[#E6F0FF] text-[#1F6FEB]"
+      : "bg-[#E6F0FF] text-[#1F6FEB]";
+  const dashboardPath =
+    role === "msme"
+      ? "/msme/dashboard"
+      : user?.id
       ? `/dashboard/${user.id}`
-      : '/dashboard';
+      : "/dashboard";
 
   const handleLogout = () => {
-    const ok = window.confirm('Are you sure you want to log out?');
+    const ok = window.confirm("Are you sure you want to log out?");
     if (ok) {
       setOpen(false);
       logout?.();
@@ -61,15 +71,26 @@ export default function Navbar() {
         />
       );
     }
-    return user?.name ? user.name.charAt(0).toUpperCase() : <UserRound size={18} />;
+    return user?.name ? (
+      user.name.charAt(0).toUpperCase()
+    ) : (
+      <UserRound size={18} />
+    );
   };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#E5E7EB] bg-white/90 backdrop-blur-md shadow-sm shadow-[#E5E7EB]/60">
       <Container className="flex items-center justify-between gap-4 py-4">
-        <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight text-[#0F172A]">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-[#0F172A]"
+        >
           <span>
-            <img src="/big.png" alt="SkaleBitz logo" className="w-26 h-5.6 md:w-33 md:h-7.2 lg:w-44 lg:h-9.6 2xl:w-56 2xl:h-12" />
+            <img
+              src="/big.png"
+              alt="SkaleBitz logo"
+              className="w-26 h-5.6 md:w-33 md:h-7.2 lg:w-44 lg:h-9.6 2xl:w-56 2xl:h-12"
+            />
           </span>
         </Link>
 
@@ -110,9 +131,11 @@ export default function Navbar() {
                   <div className="px-4 py-3 border-b border-[#E5E7EB]">
                     <p className="text-sm font-semibold text-[#0F172A] flex items-center gap-2">
                       <User2 size={16} className="text-[#1F6FEB]" />
-                      {user?.name || 'User'}
+                      {user?.name || "User"}
                     </p>
-                    <p className="text-xs text-[#4B5563] truncate">{user?.email}</p>
+                    <p className="text-xs text-[#4B5563] truncate">
+                      {user?.email}
+                    </p>
                     <p
                       className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ${roleColor}`}
                     >
@@ -130,7 +153,7 @@ export default function Navbar() {
                       Dashboard
                     </Link>
                     <Link
-                      to={`/profile/${user?.id || ''}`}
+                      to={`/profile/${user?.id || ""}`}
                       className="flex items-center gap-2 px-4 py-2 hover:bg-[#F8FAFC]"
                       onClick={() => setOpen(false)}
                     >

@@ -1,23 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import DealCard from '../components/deal/DealCard';
-import { fetchInvestorDeals } from '../services/statsService';
-import { formatCurrency, formatPercent } from '../utils/formatters';
-import { deriveLocation } from '../utils/dealMeta';
-import useAuth from '../hooks/useAuth';
-import Container from '../components/layout/Container';
+import { useEffect, useMemo, useState } from "react";
+import { Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import DealCard from "../components/deal/DealCard";
+import { fetchInvestorDeals } from "../services/statsService";
+import { formatCurrency, formatPercent } from "../utils/formatters";
+import { deriveLocation } from "../utils/dealMeta";
+import useAuth from "../hooks/useAuth";
+import Container from "../components/layout/Container";
 
 export default function InvestorDeals() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const load = async () => {
-      setError('');
+      setError("");
       setLoading(true);
       if (!user?.id) {
         setDeals([]);
@@ -29,9 +29,9 @@ export default function InvestorDeals() {
         setDeals(data || []);
       } catch (err) {
         if (import.meta.env.DEV) {
-          console.error('Failed to load investor deals', err);
+          console.error("Failed to load investor deals", err);
         }
-        setError('Unable to load your deals right now.');
+        setError("Unable to load your deals right now.");
         setDeals([]);
       } finally {
         setLoading(false);
@@ -44,15 +44,17 @@ export default function InvestorDeals() {
     () =>
       deals.map((deal) => ({
         key: deal.id || deal._id,
-        name: deal.name || 'Deal',
-        sector: deal.sector || '—',
-        amount: formatCurrency(Number(deal.utilizedAmount ?? deal.invested ?? 0)),
+        name: deal.name || "Deal",
+        sector: deal.sector || "—",
+        amount: formatCurrency(
+          Number(deal.utilizedAmount ?? deal.invested ?? 0)
+        ),
         yieldPct: formatPercent(deal.targetYield ?? deal.yieldPct ?? 0, 1),
-        status: deal.status || 'Active',
+        status: deal.status || "Active",
         location: deriveLocation(deal),
-        tenor: deal.tenorMonths ? `${deal.tenorMonths} months` : '',
-        risk: deal.risk || 'On track',
-        href: deal.id ? `/deals/${deal.id}` : '/deals',
+        tenor: deal.tenorMonths ? `${deal.tenorMonths} months` : "",
+        risk: deal.risk || "On track",
+        href: deal.id ? `/deals/${deal.id}` : "/deals",
       })),
     [deals]
   );
@@ -65,11 +67,11 @@ export default function InvestorDeals() {
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
               <Sparkles size={18} />
             </div>
-            {user?.name || 'Investor'} · Your deals
+            {user?.name || "Investor"} · Your deals
           </div>
           <button
             type="button"
-            onClick={() => navigate('/deals')}
+            onClick={() => navigate("/deals")}
             className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#1F2937] transition hover:border-[#CBD5E1]"
           >
             Browse marketplace

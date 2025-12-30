@@ -1,19 +1,25 @@
-import { useState } from 'react';
-import { ArrowRight, Banknote, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react';
+import { useState } from "react";
+import {
+  ArrowRight,
+  Banknote,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
 
 export default function CommitPanel() {
   const [amount, setAmount] = useState(25000);
 
   const tiers = [
-    { label: 'Minimum', value: '$1,000' },
-    { label: 'Suggested', value: '$25,000' },
-    { label: 'Max per policy', value: '$150,000' },
+    { label: "Minimum", value: "$1,000" },
+    { label: "Suggested", value: "$25,000" },
+    { label: "Max per policy", value: "$150,000" },
   ];
 
   const stats = [
-    { label: 'Target APY', value: '11.8%' },
-    { label: 'Tenor', value: '12 months' },
-    { label: 'Status', value: 'Active' },
+    { label: "Target APY", value: "11.8%" },
+    { label: "Tenor", value: "12 months" },
+    { label: "Status", value: "Active" },
   ];
 
   return (
@@ -35,7 +41,9 @@ export default function CommitPanel() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-[#4B5563]">Commit amount</p>
-            <p className="text-3xl font-semibold text-[#0F172A]">${amount.toLocaleString()}</p>
+            <p className="text-3xl font-semibold text-[#0F172A]">
+              ${amount.toLocaleString()}
+            </p>
             <p className="text-xs text-[#4B5563] mt-1">
               Diversification and policy limits enforced automatically.
             </p>
@@ -78,14 +86,17 @@ export default function CommitPanel() {
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
               {stat.label}
             </p>
-            <p className="mt-2 text-lg font-semibold text-[#0F172A]">{stat.value}</p>
+            <p className="mt-2 text-lg font-semibold text-[#0F172A]">
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm text-[#4B5563]">
-          Funds held in escrow until allocation completes. Payouts follow deal cadence.
+          Funds held in escrow until allocation completes. Payouts follow deal
+          cadence.
         </div>
         <button className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1F6FEB] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7]">
           Commit ${amount.toLocaleString()}

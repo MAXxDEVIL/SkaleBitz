@@ -1,18 +1,25 @@
-import { ArrowLeft, CheckCircle2, Clock, ShieldCheck, Tag, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import Container from '../components/layout/Container';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  ShieldCheck,
+  Tag,
+  User,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import Container from "../components/layout/Container";
 
 export default function OpsTaskDetail() {
   // Replace with router params and real data
   const task = {
-    id: 'Q-1026',
-    title: 'Payout: BrightMart Supplies',
-    type: 'Payouts',
-    owner: 'J. Patel',
-    status: 'Pending approval',
-    eta: '5m',
-    amount: '$48,200',
-    notes: 'Verify beneficiary and settlement account before approval.',
+    id: "Q-1026",
+    title: "Payout: BrightMart Supplies",
+    type: "Payouts",
+    owner: "J. Patel",
+    status: "Pending approval",
+    eta: "5m",
+    amount: "$48,200",
+    notes: "Verify beneficiary and settlement account before approval.",
   };
 
   return (
@@ -35,8 +42,12 @@ export default function OpsTaskDetail() {
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-md shadow-[#E0E7FF]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">{task.id}</p>
-              <h1 className="text-2xl font-semibold text-[#0F172A]">{task.title}</h1>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
+                {task.id}
+              </p>
+              <h1 className="text-2xl font-semibold text-[#0F172A]">
+                {task.title}
+              </h1>
               <p className="text-sm text-[#4B5563] mt-1">{task.notes}</p>
               <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-[#4B5563]">
                 <span className="inline-flex items-center gap-1">
@@ -54,13 +65,17 @@ export default function OpsTaskDetail() {
             </div>
             <div className="text-right">
               <p className="text-sm font-semibold text-[#4B5563]">Amount</p>
-              <p className="text-2xl font-semibold text-[#0F172A]">{task.amount}</p>
+              <p className="text-2xl font-semibold text-[#0F172A]">
+                {task.amount}
+              </p>
             </div>
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-4 text-sm text-[#4B5563]">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Checks</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+                Checks
+              </p>
               <ul className="mt-2 space-y-2">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 size={16} className="text-[#10B981]" />
@@ -77,7 +92,9 @@ export default function OpsTaskDetail() {
               </ul>
             </div>
             <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-4 text-sm text-[#4B5563]">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">Guardrails</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0EA5E9]">
+                Guardrails
+              </p>
               <ul className="mt-2 space-y-2">
                 <li>• Dual approval over $25k</li>
                 <li>• Ops notes required before release</li>

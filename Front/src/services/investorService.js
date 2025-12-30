@@ -1,5 +1,5 @@
-import api from './api';
-import { withRequestLock } from './requestLock';
+import api from "./api";
+import { withRequestLock } from "./requestLock";
 
 export const allocateInvestment = async (dealId, amount) => {
   const { data } = await api.post(`/api/deals/${dealId}/invest`, { amount });

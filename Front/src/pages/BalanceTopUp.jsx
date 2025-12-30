@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CreditCard, ShieldCheck, Wallet } from 'lucide-react';
-import useAuth from '../hooks/useAuth';
-import { formatCurrency } from '../utils/formatters';
-import Container from '../components/layout/Container';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, CreditCard, ShieldCheck, Wallet } from "lucide-react";
+import useAuth from "../hooks/useAuth";
+import { formatCurrency } from "../utils/formatters";
+import Container from "../components/layout/Container";
 
 export default function BalanceTopUp() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
-  const [amount, setAmount] = useState('');
-  const [note, setNote] = useState('');
-  const [status, setStatus] = useState('');
-  const dashboardPath = user?.id ? `/dashboard/${user.id}` : '/dashboard';
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const [status, setStatus] = useState("");
+  const dashboardPath = user?.id ? `/dashboard/${user.id}` : "/dashboard";
 
   useEffect(() => {
     const load = async () => {
@@ -29,14 +29,16 @@ export default function BalanceTopUp() {
     if (!amount) return;
     const parsed = Number(amount);
     if (!Number.isFinite(parsed) || parsed <= 0) {
-      setStatus('Please enter a valid amount above zero.');
+      setStatus("Please enter a valid amount above zero.");
       return;
     }
     setStatus(
-      `Top-up request for ${formatCurrency(parsed)} received. We'll notify you once it is processed.`
+      `Top-up request for ${formatCurrency(
+        parsed
+      )} received. We'll notify you once it is processed.`
     );
-    setAmount('');
-    setNote('');
+    setAmount("");
+    setNote("");
   };
 
   const balance = user?.balance ?? 0;
@@ -64,7 +66,9 @@ export default function BalanceTopUp() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0EA5E9]">
                 Account balance
               </p>
-              <h1 className="text-3xl font-semibold text-[#0F172A]">{formatCurrency(balance)}</h1>
+              <h1 className="text-3xl font-semibold text-[#0F172A]">
+                {formatCurrency(balance)}
+              </h1>
               <p className="mt-1 text-sm text-[#4B5563]">
                 Funds available for immediate investment.
               </p>
@@ -80,8 +84,12 @@ export default function BalanceTopUp() {
               <div className="flex items-center gap-3">
                 <Wallet className="text-[#1F6FEB]" size={20} />
                 <div>
-                  <p className="text-sm font-semibold text-[#0F172A]">Bank transfer</p>
-                  <p className="text-xs text-[#4B5563]">Same-day credit on verification</p>
+                  <p className="text-sm font-semibold text-[#0F172A]">
+                    Bank transfer
+                  </p>
+                  <p className="text-xs text-[#4B5563]">
+                    Same-day credit on verification
+                  </p>
                 </div>
               </div>
             </div>
@@ -89,8 +97,12 @@ export default function BalanceTopUp() {
               <div className="flex items-center gap-3">
                 <CreditCard className="text-[#1F6FEB]" size={20} />
                 <div>
-                  <p className="text-sm font-semibold text-[#0F172A]">Card payment</p>
-                  <p className="text-xs text-[#4B5563]">Instant availability, small fee applies</p>
+                  <p className="text-sm font-semibold text-[#0F172A]">
+                    Card payment
+                  </p>
+                  <p className="text-xs text-[#4B5563]">
+                    Instant availability, small fee applies
+                  </p>
                 </div>
               </div>
             </div>
@@ -98,14 +110,21 @@ export default function BalanceTopUp() {
               <div className="flex items-center gap-3">
                 <ShieldCheck className="text-[#10B981]" size={20} />
                 <div>
-                  <p className="text-sm font-semibold text-[#0F172A]">Verified account</p>
-                  <p className="text-xs text-[#4B5563]">Funds protected with multi-layer controls</p>
+                  <p className="text-sm font-semibold text-[#0F172A]">
+                    Verified account
+                  </p>
+                  <p className="text-xs text-[#4B5563]">
+                    Funds protected with multi-layer controls
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <form className="mt-8 grid gap-6 lg:grid-cols-2" onSubmit={handleSubmit}>
+          <form
+            className="mt-8 grid gap-6 lg:grid-cols-2"
+            onSubmit={handleSubmit}
+          >
             <div className="space-y-4">
               <label className="block text-sm font-semibold text-[#0F172A]">
                 Top-up amount

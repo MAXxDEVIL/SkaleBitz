@@ -1,24 +1,13 @@
 import {
   ArrowRight,
-  Briefcase,
   CheckCircle2,
   CreditCard,
   LineChart,
   ShieldCheck,
-  Sparkles,
   Star,
-  Search,
   Globe2,
-  Users,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const categories = [
-  { title: 'Working capital', desc: 'Bridge cash gaps for MSMEs with fast approval.', chips: ['Short tenor', 'Recurring'] },
-  { title: 'Inventory finance', desc: 'Fund inventory turns with dynamic limits.', chips: ['PO-backed', 'Collateralized'] },
-  { title: 'Purchase orders', desc: 'Finance POs and unlock supplier terms.', chips: ['Vendor-friendly', 'Milestone payouts'] },
-  { title: 'Revenue share', desc: 'Participate in upside with flexible rev-share.', chips: ['Aligned incentives', 'Real-time data'] },
-];
 
 const featuredDeals = [
   { name: 'BrightMart Supplies', tag: 'Retail ops', amount: '$120k', yieldPct: '11.8%', status: 'Active' },
@@ -31,60 +20,24 @@ const logos = ['Stripe', 'Plaid', 'Visa', 'Mastercard', 'AWS', 'Snowflake'];
 export default function Landing() {
   return (
     <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
-      {/* Top nav */}
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 lg:px-8">
-        <div className="flex items-center gap-2 text-lg font-semibold tracking-tight text-[#0F172A]">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
-            <Sparkles size={22} />
-          </div>
-          FintechOS
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <Link className="hidden rounded-full px-4 py-2 text-sm font-semibold text-[#1F2937] transition hover:text-[#1F6FEB] md:inline-block" to="/login">
-            Log in
-          </Link>
-          <Link className="rounded-full bg-[#1F6FEB] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7]" to="/register">
-            Join now
-          </Link>
-        </div>
-      </header>
-
       <main className="mx-auto max-w-6xl px-6 pb-20 lg:px-8">
-        {/* Hero: search-first like marketplace */}
+        {/* Hero */}
         <section className="grid items-center gap-12 lg:grid-cols-2">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#0EA5E9] ring-1 ring-[#E5E7EB]">
+           <div className="mt-10 space-y-6">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#0EA5E9] ring-1 ring-[#E5E7EB]"></div>
               Trusted MSME capital marketplace
             </div>
-            <div className="space-y-4">
               <h1 className="text-4xl font-semibold leading-tight text-[#0F172A] sm:text-5xl">
                 Invest in vetted MSME deals with bank-grade controls.
               </h1>
               <p className="text-lg text-[#4B5563]">
-                Discover diversified working-capital, inventory, and PO finance opportunities— with real-time risk, payouts, and compliance baked in.
+                Discover diversified working-capital, inventory, and PO finance opportunities— with real-time risk,
+                payouts, and compliance baked in.
               </p>
             </div>
 
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm shadow-[#E0E7FF]">
-                <Search size={18} className="text-[#1F6FEB]" />
-                <input
-                  placeholder="Search deals, sectors, or regions"
-                  className="w-full bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
-                />
-                <button className="rounded-full bg-[#1F6FEB] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#195cc7]">
-                  Search
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2 text-xs text-[#4B5563]">
-                <span className="rounded-full bg-[#E6F0FF] px-3 py-1 font-semibold text-[#1F6FEB]">Working capital</span>
-                <span className="rounded-full bg-[#F8FAFC] px-3 py-1 font-semibold">Inventory finance</span>
-                <span className="rounded-full bg-[#F8FAFC] px-3 py-1 font-semibold">PO finance</span>
-                <span className="rounded-full bg-[#F8FAFC] px-3 py-1 font-semibold">Rev-share</span>
-              </div>
-            </div>
-
+            {/* Stats */}
             <div className="grid grid-cols-3 gap-4 text-sm text-[#4B5563]">
               {[
                 { value: '$2.4M', label: 'Active capital' },
@@ -97,8 +50,6 @@ export default function Landing() {
                 </div>
               ))}
             </div>
-          </div>
-
           <div className="relative">
             <div className="absolute inset-0 blur-3xl">
               <div className="h-full rounded-3xl bg-linear-to-br from-[#DCEBFF] via-[#E6F7FF] to-[#F4F3FF]" />
@@ -177,6 +128,7 @@ export default function Landing() {
                     <p className="mt-1 text-lg font-semibold text-[#0F172A]">{deal.yieldPct}</p>
                   </div>
                 </div>
+
                 <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#4B5563]">
                   <span className="inline-flex items-center gap-1">
                     <ShieldCheck size={14} className="text-[#10B981]" />
@@ -187,10 +139,12 @@ export default function Landing() {
                     SEA region
                   </span>
                 </div>
+                
                 <div className="mt-4 flex gap-2">
-                  <Link className="inline-flex items-center gap-2 rounded-full bg-[#1F6FEB] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#1F6FEB33] transition hover:bg-[#195cc7]" to="/deals">
-                    View deal
-                    <ArrowRight size={14} />
+                  <Link
+                    className="inline-flex items-center gap-2 rounded-full bg-[#1F6FEB] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#1F6FEB33] transition hover:bg-[#195cc7]"
+                    to="/deals"
+                  >
                   </Link>
                   <button className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#1F2937] transition hover:border-[#CBD5E1]">
                     View memo
@@ -259,7 +213,10 @@ export default function Landing() {
         </section>
 
         {/* CTA */}
-        <section id="cta" className="mt-16 rounded-3xl bg-linear-to-r from-[#1F6FEB] via-[#0EA5E9] to-[#2563EB] p-px shadow-2xl shadow-[#CBD5F5]">
+        <section
+          id="cta"
+          className="mt-16 rounded-3xl bg-linear-to-r from-[#1F6FEB] via-[#0EA5E9] to-[#2563EB] p-px shadow-2xl shadow-[#CBD5F5]"
+        >
           <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-white px-8 py-10 lg:flex-row lg:items-center">
             <div>
               <h3 className="text-2xl font-semibold text-[#0F172A]">Start deploying capital with full visibility.</h3>
@@ -267,13 +224,20 @@ export default function Landing() {
                 Join investors funding vetted MSMEs with real-time risk controls and transparent cashflows.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">              <Link className="flex items-center gap-2 rounded-full bg-[#1F6FEB] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7]" to="/register">
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                className="flex items-center gap-2 rounded-full bg-[#1F6FEB] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1F6FEB33] transition hover:bg-[#195cc7]"
+                to="/register"
+              >
                 Create free account
                 <ArrowRight size={16} />
               </Link>
-              <a className="rounded-full border border-[#E5E7EB] px-5 py-3 text-sm font-semibold text-[#1F2937] transition hover:border-[#CBD5E1]" href="/contact">
+              <Link
+                className="rounded-full border border-[#E5E7EB] px-5 py-3 text-sm font-semibold text-[#1F2937] transition hover:border-[#CBD5E1]"
+                to="/contact"
+              >
                 Talk to sales
-              </a>
+              </Link>
             </div>
           </div>
         </section>

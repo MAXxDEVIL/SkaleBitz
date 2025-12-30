@@ -1,5 +1,6 @@
 import { ArrowLeft, CheckCircle2, Clock, ShieldCheck, Tag, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Container from '../components/layout/Container';
 
 export default function OpsTaskDetail() {
   // Replace with router params and real data
@@ -15,8 +16,8 @@ export default function OpsTaskDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F9FC] text-[#111827] px-6 py-10">
-      <div className="mx-auto flex max-w-4xl flex-col gap-8">
+    <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
+      <Container className="flex flex-col gap-8 py-10">
         <div className="flex items-center gap-3">
           <Link
             to="/ops"
@@ -98,7 +99,7 @@ export default function OpsTaskDetail() {
             </button>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

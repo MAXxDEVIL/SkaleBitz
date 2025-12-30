@@ -1,4 +1,5 @@
 import { ShieldCheck, AlertTriangle, BarChart3, Sparkles } from 'lucide-react';
+import Container from '../components/layout/Container';
 
 export default function RiskReports() {
   const alerts = [
@@ -19,14 +20,14 @@ export default function RiskReports() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F9FC] text-[#111827] px-6 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
+    <div className="min-h-screen bg-[#F6F9FC] text-[#111827]">
+      <Container className="flex flex-col gap-8 py-10">
         <header className="flex flex-col gap-2">
           <div className="flex items-center gap-2 text-sm font-semibold text-[#1F6FEB]">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E6F0FF] text-[#1F6FEB]">
               <Sparkles size={18} />
             </div>
-            FintechOS · Risk Reports
+            SkaleBitz · Risk Reports
           </div>
           <h1 className="text-3xl font-semibold text-[#0F172A]">Risk & Controls</h1>
           <p className="text-sm text-[#4B5563]">Guardrails, alerts, and portfolio risk posture.</p>
@@ -101,7 +102,7 @@ export default function RiskReports() {
             ))}
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }
